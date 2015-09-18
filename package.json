@@ -1,0 +1,25 @@
+{
+  "name": "pintadrado",
+  "version": "0.0.1",
+  "description": "Primera prueba de despliegue",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "socket.io": "1.3.6"
+  },
+  "engines": {
+    "node": "0.12.7"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://kevinaliasescribano@bitbucket.org/kevinaliasescribano/testing-canvas.git"
+  },
+  "keywords": [
+    "node",
+    "heroku",
+    "canvas",
+	"pintadrado"
+  ]
+}
