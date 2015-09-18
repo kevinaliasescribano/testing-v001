@@ -628,6 +628,11 @@
 					paintStop = false;
 				}
 
+				function restartGame(){
+					$('#divGame').hide();
+					$('#divInfo').show();
+				}
+
 				function act(){
 					
 				}
@@ -667,7 +672,6 @@
 						playerA = new Player(jugador1[0], jugador1[1], jugador1[2], 0);
 						playerB = new Player(jugador2[0], jugador2[1], jugador2[2], 0);
 						turnoPlayer = playerA;
-						console.log(playerA);
 						$('#userA').text(playerA.getUsername());
 						$('#puntosA').text(playerA.getPuntos());
 						if($('#userA').text() === playerB.getUsername()){
@@ -696,7 +700,6 @@
 						}
 					});
 					socket.on('userClick', function(usuario){
-						console.log(turnoPlayer.getUsername()+" - "+usuario);
 						if(turnoPlayer.getUsername() === usuario){
 							puedoHacerClick = true;
 						} else {
@@ -709,6 +712,10 @@
 						} else if(id === playerB.getId()){
 							$('#puntosB').text(puntos);
 						}
+					});
+					socket.on('infoLeave', function(userLeave){
+						alert("El usuario "+userLeave+" ha abandonado la partida.");
+						restartGame();
 					});
 				}
 				

@@ -4,7 +4,64 @@ var http = require('http').createServer(MyServer);
 var fs = require('fs');
 var io = require('socket.io').listen(http);
 var nSight = 0;
-var rooms = ['roomA','roomB','roomC','roomD','roomE','roomF','roomG','roomH','roomI','roomJ'];
+var rooms = {
+	roomA: {
+		playerA: '',
+		playerB: '',
+		namePlayerA: '',
+		namePlayerB: '',
+		colorPlayerA: '',
+		colorPlayerB: '',
+		turno: '',
+		numPlayers: 0,
+		users: {}
+	},
+	roomB: {
+		playerA: '',
+		playerB: '',
+		namePlayerA: '',
+		namePlayerB: '',
+		colorPlayerA: '',
+		colorPlayerB: '',
+		turno: '',
+		numPlayers: 0,
+		users: {}
+	},
+	roomC: {
+		playerA: '',
+		playerB: '',
+		namePlayerA: '',
+		namePlayerB: '',
+		colorPlayerA: '',
+		colorPlayerB: '',
+		turno: '',
+		numPlayers: 0,
+		users: {}
+	},
+	roomD: {
+		playerA: '',
+		playerB: '',
+		namePlayerA: '',
+		namePlayerB: '',
+		colorPlayerA: '',
+		colorPlayerB: '',
+		turno: '',
+		numPlayers: 0,
+		users: {}
+	},
+	roomE: {
+		playerA: '',
+		playerB: '',
+		namePlayerA: '',
+		namePlayerB: '',
+		colorPlayerA: '',
+		colorPlayerB: '',
+		turno: '',
+		numPlayers: 0,
+		users: {}
+	}
+	//...//
+}
 var contentTypes={	".html":"text/html",
 					".css":"text/css", 
 					".js":"application/javascript", 
@@ -17,28 +74,47 @@ http.listen(serverPort, function(){
 	console.log('Server running at http://localhost:' + serverPort); 
 }); 
 
-var users = {};
-
-var playerA;
-var playerB;
-var namePlayerA;
-var namePlayerB;
-var colorPlayerA;
-var colorPlayerB;
-var pointsPlayerA;
-var pointsPlayerB;
-var turno;
 
 io.on('connection', function(socket){
 	
+	var roomSelected;
+
+	for(var i in rooms){
+		if(rooms[i].numPlayers < 2){
+			console.log("Enta en la "+i);
+			socket.join(rooms[0]);
+			roomSelected = rooms[i];
+			roomSelected.numPlayers++;
+			break;
+		}
+	}
+
+	if(roomSelected === undefined){
+		alert("NUESTRAS SALAS ESTAN LLENAS");
+	}
 	
-	socket.join(rooms[0]);
 	
-	var clients = io.sockets.adapter.rooms[rooms[0]];
-	var numClients = (typeof clients !== 'undefined') ? Object.keys(clients).length : 0;
+	//var clients = io.sockets.adapter.rooms[rooms[0]];
+	//var numClients = (typeof clients !== 'undefined') ? Object.keys(clients).length : 0;
 	
 	socket.on('disconnect', function(){
-		
+		if(roomSelected.playerA === "A" && roomSelected.playerB !== ''){
+			io.sockets.connected[roomSelected.users[roomSelected.playerB]].emit('infoLeave', roomSelected.namePlayerA);
+		} else if(roomSelected.playerB === "B" && roomSelected.playerA !== ''){
+			io.sockets.connected[roomSelected.users[roomSelected.playerA]].emit('infoLeave', roomSelected.namePlayerB);
+		}
+		roomSelected.playerB = '';
+		roomSelected.namePlayerB = '';
+		roomSelected.colorPlayerB = '';
+		roomSelected.pointsPlayerB = '';
+
+		roomSelected.playerA = '';
+		roomSelected.namePlayerA = '';
+		roomSelected.colorPlayerA = '';
+		roomSelected.pointsPlayerA = '';
+
+		roomSelected.numPlayers = 0;
+		roomSelected.users = {};
 	});
 	
 	socket.on('clickEvent', function(bordes, color, id){
@@ -46,32 +122,35 @@ io.on('connection', function(socket){
 	});
 	
 	socket.on('join', function(username, color){
-		socket.username = username;
-		users[username] = socket.id;
-		if(playerA === undefined){
-			playerA = "A";
-			namePlayerA = username;
-			colorPlayerA = color;
+		if(roomSelected.playerA === ''){
+			roomSelected.playerA = "A";
+			socket.username = "A";
+			roomSelected.namePlayerA = username;
+			roomSelected.colorPlayerA = color;
 			io.sockets.connected[socket.id].emit('loading');
-		} else if(playerB === undefined){
-			playerB = "B";
-			namePlayerB = username;
-			colorPlayerB = color;
-			io.sockets.emit('newPlayers', [playerA, namePlayerA, colorPlayerA], [playerB, namePlayerB, colorPlayerB]);
+			roomSelected.users[roomSelected.playerA] = socket.id;
+		} else if(roomSelected.playerB === ''){
+			roomSelected.playerB = "B";
+			socket.username = "B";
+			roomSelected.namePlayerB = username;
+			roomSelected.colorPlayerB = color;
+			roomSelected.users[roomSelected.playerB] = socket.id;
+			io.sockets.connected[roomSelected.users[roomSelected.playerA]].emit('newPlayers', [roomSelected.playerA, roomSelected.namePlayerA, roomSelected.colorPlayerA], [roomSelected.playerB, roomSelected.namePlayerB, roomSelected.colorPlayerB]);
+			io.sockets.connected[roomSelected.users[roomSelected.playerB]].emit('newPlayers', [roomSelected.playerA, roomSelected.namePlayerA, roomSelected.colorPlayerA], [roomSelected.playerB, roomSelected.namePlayerB, roomSelected.colorPlayerB]);
 		}
 	});
 
 	socket.on('cambiarTurno', function(playerWithToken){
-		if(playerWithToken === playerA){
-			turno = playerB;
-		} else if(playerWithToken === playerB){
-			turno = playerA;
+		if(playerWithToken === roomSelected.playerA){
+			roomSelected.turno = roomSelected.playerB;
+		} else if(playerWithToken === roomSelected.playerB){
+			roomSelected.turno = roomSelected.playerA;
 		}
 		io.sockets.emit('turnoCambiado', socket.username);
 	});
 
 	socket.on('canIClick', function(){
-		io.sockets.connected[users[socket.username]].emit('userClick', socket.username);
+		io.sockets.connected[roomSelected.users[socket.username]].emit('userClick', socket.username);
 	});
 
 	socket.on('makePoints', function(id, puntos){
@@ -82,7 +161,7 @@ io.on('connection', function(socket){
 function MyServer(request,response){
 	var filePath = '.' + request.url;
 	if (filePath == './'){
-		filePath = './index.html';
+		filePath = './pruebacanvas3.html';
 	}
 	var extname = filePath.substr(filePath.lastIndexOf('.'));
 	var contentType = contentTypes[extname];
