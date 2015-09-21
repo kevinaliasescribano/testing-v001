@@ -129,7 +129,7 @@
 				<p><span id="userB">Waiting for user</span>: <span id="puntosB"></span></p>
 			</div>
 		</div>
-		<div id"results" style="display:inline-block;">
+		<div id="results" style="display:inline-block;">
 			<div style="display:inline-block;margin:5px;vertical-align:bottom;">
 				<span> PLAYER A </span>
 				<div id="marcadorA" style="height:10px;border:1px solid black;"></div>
@@ -178,7 +178,7 @@
 				}());
 				
 				function paint(ctx){
-					ctx.fillStyle = 'rgb(230,230,230)';
+					ctx.fillStyle = colorLineas;
 					ctx.fillRect(0,0,canvas.width,canvas.height);
 					
 					ctx.fillStyle = 'white';
@@ -546,28 +546,28 @@
 													cuadrados[parseInt(i)-cols].getBordesPintados()['bottom'][0] = true;
 													cuadrados[parseInt(i)-cols].getBordesPintados()['bottom'][1] = turnoPlayer.getColor();
 
-													socket.emit('clickEvent', cuadrados[parseInt(i)-cols].getBordesPintados(), cuadrados[parseInt(i)-cols].getColor(), parseInt(i)-cols);
+													socket.emit('clickEvent', cuadrados[parseInt(i)-cols].getBordesPintados(), cuadrados[parseInt(i)-cols].getColor(), parseInt(i)-cols, cuadrados[parseInt(i)-cols].getColored());
 												}
 											} else if(j === 'right'){
 												if(cuadrados[parseInt(i)+1] != undefined){
 													cuadrados[parseInt(i)+1].getBordesPintados()['left'][0] = true;
 													cuadrados[parseInt(i)+1].getBordesPintados()['left'][1] = turnoPlayer.getColor();
 
-													socket.emit('clickEvent', cuadrados[parseInt(i)+1].getBordesPintados(), cuadrados[parseInt(i)+1].getColor(), parseInt(i)+1);
+													socket.emit('clickEvent', cuadrados[parseInt(i)+1].getBordesPintados(), cuadrados[parseInt(i)+1].getColor(), parseInt(i)+1, cuadrados[parseInt(i)+1].getColored());
 												}
 											} else if(j === 'bottom'){
 												if(cuadrados[parseInt(i)+cols] != undefined){
 													cuadrados[parseInt(i)+cols].getBordesPintados()['top'][0] = true;
 													cuadrados[parseInt(i)+cols].getBordesPintados()['top'][1] = turnoPlayer.getColor();
 
-													socket.emit('clickEvent', cuadrados[parseInt(i)+cols].getBordesPintados(), cuadrados[parseInt(i)+cols].getColor(), parseInt(i)+cols);
+													socket.emit('clickEvent', cuadrados[parseInt(i)+cols].getBordesPintados(), cuadrados[parseInt(i)+cols].getColor(), parseInt(i)+cols, cuadrados[parseInt(i)+cols].getColored());
 												}
 											} else if(j === 'left'){
 												if(cuadrados[parseInt(i)-1] != undefined){
 													cuadrados[parseInt(i)-1].getBordesPintados()['right'][0] = true;
 													cuadrados[parseInt(i)-1].getBordesPintados()['right'][1] = turnoPlayer.getColor();
 
-													socket.emit('clickEvent', cuadrados[parseInt(i)-1].getBordesPintados(), cuadrados[parseInt(i)-1].getColor(), parseInt(i)-1);
+													socket.emit('clickEvent', cuadrados[parseInt(i)-1].getBordesPintados(), cuadrados[parseInt(i)-1].getColor(), parseInt(i)-1, cuadrados[parseInt(i)-1].getColored());
 												}
 											}
 											swapedBorder = true;
@@ -583,28 +583,28 @@
 														cuadrados[parseInt(i)-cols].getBordesPintados()['bottom'][0] = true;
 														cuadrados[parseInt(i)-cols].getBordesPintados()['bottom'][1] = turnoPlayer.getColor();
 
-														socket.emit('clickEvent', cuadrados[parseInt(i)-cols].getBordesPintados(), cuadrados[parseInt(i)-cols].getColor(), parseInt(i)-cols);
+														socket.emit('clickEvent', cuadrados[parseInt(i)-cols].getBordesPintados(), cuadrados[parseInt(i)-cols].getColor(), parseInt(i)-cols, cuadrados[parseInt(i)-cols].getColored());
 													}
 												} else if(j === 'right'){
 													if(cuadrados[parseInt(i)+1] != undefined){
 														cuadrados[parseInt(i)+1].getBordesPintados()['left'][0] = true;
 														cuadrados[parseInt(i)+1].getBordesPintados()['left'][1] = turnoPlayer.getColor();
 
-														socket.emit('clickEvent', cuadrados[parseInt(i)+1].getBordesPintados(), cuadrados[parseInt(i)+1].getColor(), parseInt(i)+1);
+														socket.emit('clickEvent', cuadrados[parseInt(i)+1].getBordesPintados(), cuadrados[parseInt(i)+1].getColor(), parseInt(i)+1, cuadrados[parseInt(i)+1].getColored());
 													}
 												} else if(j === 'bottom'){
 													if(cuadrados[parseInt(i)+cols] != undefined){
 														cuadrados[parseInt(i)+cols].getBordesPintados()['top'][0] = true;
 														cuadrados[parseInt(i)+cols].getBordesPintados()['top'][1] = turnoPlayer.getColor();
 
-														socket.emit('clickEvent', cuadrados[parseInt(i)+cols].getBordesPintados(), cuadrados[parseInt(i)+cols].getColor(), parseInt(i)+cols);
+														socket.emit('clickEvent', cuadrados[parseInt(i)+cols].getBordesPintados(), cuadrados[parseInt(i)+cols].getColor(), parseInt(i)+cols, cuadrados[parseInt(i)+cols].getColored());
 													}
 												} else if(j === 'left'){
 													if(cuadrados[parseInt(i)-1] != undefined){
 														cuadrados[parseInt(i)-1].getBordesPintados()['right'][0] = true;
 														cuadrados[parseInt(i)-1].getBordesPintados()['right'][1] = turnoPlayer.getColor();
 
-														socket.emit('clickEvent', cuadrados[parseInt(i)-1].getBordesPintados(), cuadrados[parseInt(i)-1].getColor(), parseInt(i)-1);
+														socket.emit('clickEvent', cuadrados[parseInt(i)-1].getBordesPintados(), cuadrados[parseInt(i)-1].getColor(), parseInt(i)-1, cuadrados[parseInt(i)-1].getColored());
 													}
 												}
 											}
@@ -616,27 +616,31 @@
 										puntosActuales++;
 										turnoPlayer.setPuntos(puntosActuales);
 										socket.emit('makePoints', turnoPlayer.getId(), puntosActuales);
+										socket.emit('paintSquare', turnoPlayer.getColor(), i);
 										cuadrados[i].setColor(turnoPlayer.getColor());
 										cuadrados[i].changeColored();
 										ctx.fillStyle = cuadrados[i].getColor();
 										ctx.fillRect(cuadrados[i].values()[0],cuadrados[i].values()[1],cuadrados[i].values()[2],cuadrados[i].values()[2]);
 										changeTurn = false;
-										completed = true;
-										for(j in cuadrados){
-											if(cuadrados[j].getColored() === false){
-												completed = false;
-											}
-										}
 									}
 								} else {
 									changeTurn = false;
 								}
-								socket.emit('clickEvent', cuadrados[i].getBordesPintados(), cuadrados[i].getColor(), i);
+								socket.emit('clickEvent', cuadrados[i].getBordesPintados(), cuadrados[i].getColor(), i, cuadrados[i].getColored());
+								completed = true;
+								for(j in cuadrados){
+									if(cuadrados[j].getColored() === false){
+										console.log(j);
+										//console.log(cuadrados[j].getColored());
+										completed = false;
+									}
+								}
+								console.log(completed);
 								if(completed){
-									console.log(playerA.getPuntos()+" - "+playerB.getPuntos()+" - "+turnoPlayer.getPuntos());
 									socket.emit('finalizarPartida', playerA.getPuntos(), playerB.getPuntos());
 								}
 							}
+							//console.log(cuadrados[i]);
 						}
 					
 						if(changeTurn){
@@ -679,7 +683,7 @@
 				
 				function enableSockets(){
 					socket = io.connect();
-					socket.on('enviarCuadrados', function(bordes, color, id){
+					socket.on('enviarCuadrados', function(bordes, color, id, pintado){
 						cuadrados[id].setColor(color);
 						cuadrados[id].setBordesPintados(bordes);
 						paintStop = false;
@@ -746,18 +750,20 @@
 					});
 					socket.on('partidaFinalizada', function(text){
 						alert(text);
+						$('#divGame').hide(300);
+						$('#results').show(300);
+						$('#marcadorA').css('background-color', playerA.getColor());
+						$('#marcadorB').css('background-color', playerB.getColor());
 						for(i in cuadrados){
-							console.log(cuadrados[i].getColor()+" - "+playerB.getColor());
 							if(cuadrados[i].getColor() === playerA.getColor()){
-								setTimeout(function(){
-									$('#marcadorA').css('height', parseInt($('#marcadorA').css('height')) + 20);
-								},1000);
+								$('#marcadorA').css('height', parseInt($('#marcadorA').css('height')) + 20);
 							} else if(cuadrados[i].getColor() === playerB.getColor()){
-								setTimeout(function(){
-									$('#marcadorB').css('height', parseInt($('#marcadorB').css('height')) + 20);
-								},1000);
+								$('#marcadorB').css('height', parseInt($('#marcadorB').css('height')) + 20);
 							}
 						}
+					});
+					socket.on('squarePainted', function(color, id){
+						cuadrados[id].changeColored();
 					});
 				}
 				
@@ -765,6 +771,7 @@
 					init();
 					$('#divGame').hide();
 					$('#waitingPlayer').hide();
+					$('#results').hide();
 				}
 				
 				document.addEventListener('keyup', function(evt){

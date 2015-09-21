@@ -127,8 +127,8 @@ io.on('connection', function(socket){
 		roomSelected.users = {};
 	});
 	
-	socket.on('clickEvent', function(bordes, color, id){
-		io.sockets.emit('enviarCuadrados', bordes, color, id);
+	socket.on('clickEvent', function(bordes, color, id, pintado){
+		io.sockets.emit('enviarCuadrados', bordes, color, id, pintado);
 	});
 	
 	socket.on('join', function(username, color){
@@ -182,7 +182,10 @@ io.on('connection', function(socket){
 			io.sockets.connected[roomSelected.users[roomSelected.playerA]].emit('partidaFinalizada', 'EMPATE');
 			io.sockets.connected[roomSelected.users[roomSelected.playerB]].emit('partidaFinalizada', 'EMPATE');
 		}
-	})
+	});
+	socket.on('paintSquare', function(color, id){
+		io.sockets.emit('squarePainted', color, id);
+	});
 });
 
 function MyServer(request,response){
