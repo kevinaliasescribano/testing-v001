@@ -160,7 +160,9 @@ io.on('connection', function(socket){
 	});
 
 	socket.on('canIClick', function(){
-		io.sockets.connected[roomSelected.users[socket.username]].emit('userClick', socket.username);
+		if(socket.username !== undefined){
+			io.sockets.connected[roomSelected.users[socket.username]].emit('userClick', socket.username);
+		}
 	});
 
 	socket.on('makePoints', function(id, puntos){
@@ -169,6 +171,18 @@ io.on('connection', function(socket){
 	socket.on('comenzarPartida', function(){
 		io.sockets.connected[roomSelected.users[socket.username]].emit('comenzarGame');
 	});
+	socket.on('finalizarPartida', function(puntosA, puntosB){
+		if(puntosA > puntosB){
+			io.sockets.connected[roomSelected.users[roomSelected.playerA]].emit('partidaFinalizada', 'FELICIDADES!');
+			io.sockets.connected[roomSelected.users[roomSelected.playerB]].emit('partidaFinalizada', 'GANA A');
+		} else if(puntosB > puntosA){
+			io.sockets.connected[roomSelected.users[roomSelected.playerA]].emit('partidaFinalizada', 'GANA B');
+			io.sockets.connected[roomSelected.users[roomSelected.playerB]].emit('partidaFinalizada', 'FELICIDADES!');
+		} else {
+			io.sockets.connected[roomSelected.users[roomSelected.playerA]].emit('partidaFinalizada', 'EMPATE');
+			io.sockets.connected[roomSelected.users[roomSelected.playerB]].emit('partidaFinalizada', 'EMPATE');
+		}
+	})
 });
 
 function MyServer(request,response){
