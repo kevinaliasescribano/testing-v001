@@ -62,6 +62,9 @@ var rooms = {
 	}
 	//...//
 }
+
+var ips = [];
+
 var contentTypes={	".html":"text/html",
 					".css":"text/css", 
 					".js":"application/javascript", 
@@ -76,23 +79,27 @@ http.listen(serverPort, function(){
 
 
 io.on('connection', function(socket){
-	
+
 	var roomSelected;
-
-	for(var i in rooms){
-		if(rooms[i].numPlayers < 2){
-			console.log("Enta en la "+i);
-			socket.join(rooms[0]);
-			roomSelected = rooms[i];
-			roomSelected.numPlayers++;
-			break;
-		}
-	}
-
-	if(roomSelected === undefined){
-		alert("NUESTRAS SALAS ESTAN LLENAS");
-	}
 	
+	//if(ips.indexOf(socket.handshake.address) == -1){
+		//ips.push(socket.handshake.address);
+		for(var i in rooms){
+			if(rooms[i].numPlayers < 2){
+				console.log("Enta en la "+i);
+				socket.join(rooms[0]);
+				roomSelected = rooms[i];
+				roomSelected.numPlayers++;
+				break;
+			}
+		}
+
+		if(roomSelected === undefined){
+			console.log("NUESTRAS SALAS ESTAN LLENAS");
+		}
+	//} else {
+	//	console.log("USUARIO YA CONECTADO");
+	//}
 	
 	//var clients = io.sockets.adapter.rooms[rooms[0]];
 	//var numClients = (typeof clients !== 'undefined') ? Object.keys(clients).length : 0;
@@ -103,6 +110,9 @@ io.on('connection', function(socket){
 		} else if(roomSelected.playerB === "B" && roomSelected.playerA !== ''){
 			io.sockets.connected[roomSelected.users[roomSelected.playerA]].emit('infoLeave', roomSelected.namePlayerB);
 		}
+
+		ips.splice(ips.indexOf(socket.handshake.address), 1);
+
 		roomSelected.playerB = '';
 		roomSelected.namePlayerB = '';
 		roomSelected.colorPlayerB = '';
@@ -155,6 +165,9 @@ io.on('connection', function(socket){
 
 	socket.on('makePoints', function(id, puntos){
 		io.sockets.emit('printPoints', id, puntos);
+	});
+	socket.on('comenzarPartida', function(){
+		io.sockets.connected[roomSelected.users[socket.username]].emit('comenzarGame');
 	});
 });
 

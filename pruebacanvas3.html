@@ -4,12 +4,11 @@
 		<style>
 			div.espacioTurno{
 				-webkit-transition: background-color 0.5s linear; 
-				background: #FFF; 
 			}
 
-			div.espacioTurno.active{
+			div.espacioTurno.inactive{
 				-webkit-transition: background-color 0.5s linear; 
-				background: #CCC;
+				background: #FFF !important;
 			}
 			i#iconoFlecha{
 				-webkit-transition: transform 0.2s linear;
@@ -508,7 +507,6 @@
 							}
 						}
 					}
-					console.log(cuadrados);
 					pintarCuadrados(ctx);
 				}
 				
@@ -683,24 +681,27 @@
 						$('#waitingPlayer').fadeOut(300 ,function(){
 							$('#divGame').fadeIn(300);
 						});
+						$('#cuadroColorA').css('background-color', playerA.getColor());
+						$('#cuadroColorB').css('background-color', playerB.getColor());
+						$('#cuadroColorB').addClass('inactive');
 						socket.emit('canIClick');
-						partidaComenzada = true;
+						socket.emit('comenzarPartida');
 					});
 					socket.on('turnoCambiado', function(usuario){
-						if(usuario === playerA.getUsername()){
+						if(usuario === playerA.getId()){
 							turnoPlayer = playerB;
-							$('#cuadroColorA').removeClass('active');
-							$('#cuadroColorB').addClass('active');
+							$('#cuadroColorA').addClass('inactive');
+							$('#cuadroColorB').removeClass('inactive');
 							$('#iconoFlecha').addClass('inverse');
-						} else if(usuario === playerB.getUsername()){
+						} else if(usuario === playerB.getId()){
 							turnoPlayer = playerA;
-							$('#cuadroColorA').addClass('active');
-							$('#cuadroColorB').removeClass('active');
+							$('#cuadroColorA').removeClass('inactive');
+							$('#cuadroColorB').addClass('inactive');
 							$('#iconoFlecha').removeClass('inverse');
 						}
 					});
 					socket.on('userClick', function(usuario){
-						if(turnoPlayer.getUsername() === usuario){
+						if(turnoPlayer.getId() === usuario){
 							puedoHacerClick = true;
 						} else {
 							puedoHacerClick = false;
@@ -717,6 +718,9 @@
 						alert("El usuario "+userLeave+" ha abandonado la partida.");
 						restartGame();
 					});
+					socket.on('comenzarGame', function(){
+						partidaComenzada = true;
+					})
 				}
 				
 				window.onload = function(){
