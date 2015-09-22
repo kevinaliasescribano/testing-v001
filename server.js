@@ -105,10 +105,11 @@ io.on('connection', function(socket){
 	//var numClients = (typeof clients !== 'undefined') ? Object.keys(clients).length : 0;
 	
 	socket.on('disconnect', function(){
-		if(roomSelected.playerA === "A" && roomSelected.playerB !== ''){
-			io.sockets.connected[roomSelected.users[roomSelected.playerB]].emit('infoLeave', roomSelected.namePlayerA);
-		} else if(roomSelected.playerB === "B" && roomSelected.playerA !== ''){
+		console.log(roomSelected.users[roomSelected.playerB]);
+		if(roomSelected.playerA === "A" && socket.username === "B"){
 			io.sockets.connected[roomSelected.users[roomSelected.playerA]].emit('infoLeave', roomSelected.namePlayerB);
+		} else if(roomSelected.playerB === "B" && socket.username === "A"){
+			io.sockets.connected[roomSelected.users[roomSelected.playerB]].emit('infoLeave', roomSelected.namePlayerA);
 		}
 
 		ips.splice(ips.indexOf(socket.handshake.address), 1);
@@ -182,6 +183,19 @@ io.on('connection', function(socket){
 			io.sockets.connected[roomSelected.users[roomSelected.playerA]].emit('partidaFinalizada', 'EMPATE');
 			io.sockets.connected[roomSelected.users[roomSelected.playerB]].emit('partidaFinalizada', 'EMPATE');
 		}
+
+		roomSelected.playerB = '';
+		roomSelected.namePlayerB = '';
+		roomSelected.colorPlayerB = '';
+		roomSelected.pointsPlayerB = '';
+
+		roomSelected.playerA = '';
+		roomSelected.namePlayerA = '';
+		roomSelected.colorPlayerA = '';
+		roomSelected.pointsPlayerA = '';
+
+		roomSelected.numPlayers = 0;
+		roomSelected.users = {};
 	});
 	socket.on('paintSquare', function(color, id){
 		io.sockets.emit('squarePainted', color, id);
