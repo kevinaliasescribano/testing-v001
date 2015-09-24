@@ -3,6 +3,8 @@ var serverPort = process.env.PORT || 8000;
 var http = require('http').createServer(MyServer);
 var fs = require('fs');
 var io = require('socket.io').listen(http);
+var pg = require('pg');	
+var url_database = 'postgres://vqirkyzfmaagxq:TDNwprpRbTWJosQdqP-1YdjjU8@ec2-54-217-240-205.eu-west-1.compute.amazonaws.com:5432/ddmftfl54cvb0t?ssl=true';
 var nSight = 0;
 var rooms = {
 	roomA: {
@@ -84,19 +86,19 @@ io.on('connection', function(socket){
 	
 	//if(ips.indexOf(socket.handshake.address) == -1){
 		//ips.push(socket.handshake.address);
-		for(var i in rooms){
-			if(rooms[i].numPlayers < 2){
-				console.log("Enta en la "+i);
-				socket.join(rooms[0]);
-				roomSelected = rooms[i];
-				roomSelected.numPlayers++;
-				break;
-			}
+	for(var i in rooms){
+		if(rooms[i].numPlayers < 2){
+			console.log("Enta en la "+i);
+			socket.join(rooms[0]);
+			roomSelected = rooms[i];
+			roomSelected.numPlayers++;
+			break;
 		}
+	}
 
-		if(roomSelected === undefined){
-			console.log("NUESTRAS SALAS ESTAN LLENAS");
-		}
+	if(roomSelected === undefined){
+		console.log("NUESTRAS SALAS ESTAN LLENAS");
+	}
 	//} else {
 	//	console.log("USUARIO YA CONECTADO");
 	//}
@@ -230,3 +232,33 @@ function MyServer(request,response){
 		}
 	});
 }
+
+console.log(process.env.DATABASE_URL);
+
+
+pg.connect(url_database, function(err, client) {
+  if (err) throw err;
+  console.log('Connected to postgres! Creating tables...');
+
+	//client
+	//	.query('CREATE TABLE IF NOT EXISTS prueba(col1 int, col2 int)');
+
+	//client
+	//	.query('DROP TABLE prueba');
+	
+	//client
+	//	.query('INSERT INTO prueba VALUES (1, 2)')
+	//	.on('row', function(row) {
+	//		console.log(JSON.stringify(row));
+	//});
+
+	//client
+	//	.query('SELECT * FROM prueba')
+	//	.on('row', function(row) {
+	//		console.log(row.col1);
+	//	})
+	//	.on('end',function(){
+	//		client.end();
+	//});
+
+});
