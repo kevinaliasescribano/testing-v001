@@ -4,27 +4,27 @@
 		<link rel="stylesheet" type="text/css" href="app/styles.css">
 	</head>
 	<body>
-		<div id="lightbox" style="display:none;">
-			<div style="width:100%;text-align:center;">
-				<h5 id="textoLightbox" style="margin:0;padding:5%;">TEXTO DE PRUEBA</h5>
+		<div id="lightbox">
+			<div>
+				<h5 id="textoLightbox">TEXTO DE PRUEBA</h5>
 			</div>
-			<div id="results" style="display:inline-block;text-align:center;height:60%;width:100%;">
+			<div id="results">
 				<div>
-					<div style="display:inline-block;margin:5px;vertical-align:bottom;">
+					<div>
 						<span> A </span>
 						<div id="marcadorA"></div>
 					</div>
-					<div style="display:inline-block;margin:5px;vertical-align:bottom;">
+					<div>
 						<span> B </span>
 						<div id="marcadorB"></div>
 					</div>
 				</div>
 			</div>
-			<div style="text-align:center;height:10%;">
+			<div>
 				<a href="http://localhost:8000">Juega de nuevo!</a>
 			</div>
 		</div>
-		<div id="darkness" style="display:none;"></div>
+		<div id="darkness"></div>
 		<div id="divInfo">
 			<input type="text" id="username">
 			<input type="color" id="userColor">
@@ -37,13 +37,13 @@
 		<div id="divGame">
 			<h3>Esto es CANVAS!</h3>
 			<div id="indicadorTurno">
-				<span id="nombreA" style="float:left;margin-right:5px;">NOMBRE-A</span>
-				<div id="cuadroColorA" class="espacioTurno" style="width:20px;height:20px;border:1px solid black;float:left;"></div>
-				<i id="iconoFlecha" style="float:left;width:20px;height:20px;background-size:cover;margin:0 5px;"></i>
-				<div id="cuadroColorB" class="espacioTurno" style="width:20px;height:20px;border:1px solid black;float:left;"></div>
-				<span id="nombreB" style="float:left;margin-left:5px;">NOMBRE-B</span>
+				<span id="nombreA" class="names">NOMBRE-A</span>
+				<div id="cuadroColorA" class="espacioTurno"></div>
+				<i id="iconoFlecha"></i>
+				<div id="cuadroColorB" class="espacioTurno"></div>
+				<span id="nombreB" class="names">NOMBRE-B</span>
 			</div>
-			<canvas id="canvas" style="border:solid 1px black; display:block;" width="600" height="300"></canvas>
+			<canvas id="canvas" width="600" height="300"></canvas>
 			<div>
 				<p><span id="userA">Waiting for user</span>: <span id="puntosA"></span></p>
 				<p><span id="userB">Waiting for user</span>: <span id="puntosB"></span></p>

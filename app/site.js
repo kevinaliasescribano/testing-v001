@@ -648,11 +648,9 @@
 			$('#marcadorA').css('background-color', playerA.getColor());
 			$('#marcadorB').css('background-color', playerB.getColor());
 
-			var alturaCalculadaA = (playerA.getPuntos() * 75) / cuadrados.length +"%";
-			console.log("ALTURA PARA A "+alturaCalculadaA);
+			var alturaCalculadaA = (playerA.getPuntos() * 80) / cuadrados.length;
 			$('#marcadorA').css('max-height', alturaCalculadaA);
-			var alturaCalculadaB = (playerB.getPuntos() * 75) / cuadrados.length +"%";
-			console.log("ALTURA PARA B "+alturaCalculadaB);
+			var alturaCalculadaB = (playerB.getPuntos() * 80) / cuadrados.length;
 			$('#marcadorB').css('max-height', alturaCalculadaB);
 		});
 		socket.on('squarePainted', function(color, id){
@@ -664,7 +662,8 @@
 		init();
 		$('#divGame').hide();
 		$('#waitingPlayer').hide();
-		$('#results').hide();
+		$('#lightbox').hide();
+		$('#darkness').hide();
 	}
 	
 	document.addEventListener('keyup', function(evt){

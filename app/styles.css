@@ -1,89 +1,6 @@
-div.espacioTurno{
-	-webkit-transition: background-color 0.5s linear; 
-}
+/**********************************************************************/
+/*********************** ESTILOS PARA LIGHTBOX ************************/
 
-div.espacioTurno.inactive{
-	-webkit-transition: background-color 0.5s linear; 
-	background: #FFF !important;
-}
-i#iconoFlecha{
-	-webkit-transition: transform 0.2s linear;
-	background-image: url("http://www2.psd100.com/ppp/2013/11/2701/Left-arrow-1127194155.png");
-}
-i#iconoFlecha.inverse{
-	-webkit-transition: transform 0.2s linear;
-	transform: rotate(180deg);
-	background-image: url("http://www2.psd100.com/ppp/2013/11/2701/Left-arrow-1127194155.png");
-}
-/////////////////////////////////
-#loader-wrapper {
-	position: fixed;
-	top: 0;
-	left: 0;
-	width: 100%;
-	height: 100%;
-	z-index: 1000;
-}
-#loader {
-	display: block;
-	position: relative;
-	left: 44%;
-	/*top: 50%;*/
-	width: 150px;
-	/*height: 150px;*/
-	margin: 100px 0 0 0;
-	border-radius: 50%;
-	border: 3px solid transparent;
-	border-top-color: #3498db;
-
-	-webkit-animation: spin 2s linear infinite; /* Chrome, Opera 15+, Safari 5+ */
-	animation: spin 2s linear infinite; /* Chrome, Firefox 16+, IE 10+, Opera */
-}
-
-#loader:before {
-	content: "";
-	position: absolute;
-	top: -3px;
-	left: 5px;
-	right: 5px;
-	bottom: 5px;
-	border-radius: 50%;
-	border: 3px solid transparent;
-	border-top-color: #e74c3c;
-
-	-webkit-animation: spin 3s linear infinite; /* Chrome, Opera 15+, Safari 5+ */
-	animation: spin 3s linear infinite; /* Chrome, Firefox 16+, IE 10+, Opera */
-}
-
-#loader:after {
-	content: "";
-	position: absolute;
-	top: -3px;
-	left: 15px;
-	right: 15px;
-	bottom: 15px;
-	border-radius: 50%;
-	border: 3px solid transparent;
-	border-top-color: #f9c922;
-
-	-webkit-animation: spin 1.5s linear infinite; /* Chrome, Opera 15+, Safari 5+ */
-	  animation: spin 1.5s linear infinite; /* Chrome, Firefox 16+, IE 10+, Opera */
-}
-
-#darkness {
-	display: auto;
-	position: absolute;
-	top: 0%;
-	left: 0%;
-	width: 100%;
-	height: 100%;
-	background-color: black;
-	z-index:1001;
-	-moz-opacity: 0.8;
-	opacity:.80;
-	filter: alpha(opacity=80);
-}
- 
 #lightbox {
 	display: auto;
 	position: absolute;
@@ -96,6 +13,16 @@ i#iconoFlecha.inverse{
 	background-color: white;
 	z-index:1002;
 	overflow: auto;
+}
+
+#lightbox > div {
+	width:100%;
+	text-align:center;
+}
+
+#lightbox #textoLightbox {
+	margin:0;
+	padding:3%;
 }
 
 #lightbox.finish {
@@ -112,6 +39,166 @@ i#iconoFlecha.inverse{
 	overflow: auto;
 }
 
+#lightbox #results {
+	display:inline-block;
+	text-align:center;
+	height:65%;
+	width:100%;
+	position:relative;
+}
+
+#lightbox #results > div {
+	position:absolute;
+	bottom:0;
+	width:100%;
+}
+
+#lightbox #results > div > div {
+	display:inline-block;
+	margin:5px;
+	vertical-align:bottom;
+}
+
+#lightbox #results #marcadorA {
+	height:10000px;
+	max-height:10px;
+	border:1px solid black;
+	min-width:50px;
+	-moz-transition: 2s;
+	-ms-transition: 2s;
+	-o-transition: 2s;
+	-webkit-transition: 2s;
+	transition: 2s;
+}
+
+#lightbox #results #marcadorB {
+	height:10000px;
+	max-height:10px;
+	border:1px solid black;
+	min-width:50px;
+	-moz-transition: 1s;
+	-ms-transition: 1s;
+	-o-transition: 1s;
+	-webkit-transition: 5s;
+	transition: 5s;
+}
+
+/*************************************************************************/
+/********************* ESTILOS PARA DARKNESS *****************************/
+
+#darkness {
+	display: auto;
+	position: absolute;
+	top: 0%;
+	left: 0%;
+	width: 100%;
+	height: 100%;
+	background-color: black;
+	z-index:1001;
+	-moz-opacity: 0.8;
+	opacity:.80;
+	filter: alpha(opacity=80);
+}
+
+/*************************************************************************/
+/************************ ESTILOS PARA WAITING PLAYER ********************/
+
+#waitingPlayer p{
+	text-align: center;
+	font-size: 1.5em;
+}
+
+#waitingPlayer #loader {
+	display: block;
+	position: relative;
+	left: 44%;
+	/*top: 50%;*/
+	width: 150px;
+	/*height: 150px;*/
+	margin: 100px 0 0 0;
+	border-radius: 50%;
+	border: 3px solid transparent;
+	border-top-color: #3498db;
+
+	-webkit-animation: spin 2s linear infinite; /* Chrome, Opera 15+, Safari 5+ */
+	animation: spin 2s linear infinite; /* Chrome, Firefox 16+, IE 10+, Opera */
+}
+
+#waitingPlayer #loader:before {
+	content: "";
+	position: absolute;
+	top: -3px;
+	left: 5px;
+	right: 5px;
+	bottom: 5px;
+	border-radius: 50%;
+	border: 3px solid transparent;
+	border-top-color: #e74c3c;
+
+	-webkit-animation: spin 3s linear infinite; /* Chrome, Opera 15+, Safari 5+ */
+	animation: spin 3s linear infinite; /* Chrome, Firefox 16+, IE 10+, Opera */
+}
+
+#waitingPlayer #loader:after {
+	content: "";
+	position: absolute;
+	top: -3px;
+	left: 15px;
+	right: 15px;
+	bottom: 15px;
+	border-radius: 50%;
+	border: 3px solid transparent;
+	border-top-color: #f9c922;
+
+	-webkit-animation: spin 1.5s linear infinite; /* Chrome, Opera 15+, Safari 5+ */
+	  animation: spin 1.5s linear infinite; /* Chrome, Firefox 16+, IE 10+, Opera */
+}
+
+/**************************************************************************/
+/************************** ESTILOS PARA DIVGAME **************************/
+
+#divGame #indicadorTurno .names{
+	float:left;
+	margin-right:5px;
+}
+
+#divGame #indicadorTurno .espacioTurno {
+	-webkit-transition: background-color 0.5s linear;
+	width:20px;
+	height:20px;
+	border:1px solid black;
+	float:left;
+}
+
+#divGame #indicadorTurno .espacioTurno.inactive {
+	-webkit-transition: background-color 0.5s linear; 
+	background: #FFF !important;
+}
+
+#divGame #indicadorTurno #iconoFlecha{
+	-webkit-transition: transform 0.2s linear;
+	background-image: url("http://www2.psd100.com/ppp/2013/11/2701/Left-arrow-1127194155.png");
+	float:left;
+	width:20px;
+	height:20px;
+	background-size:cover;
+	margin:0 5px;
+}
+
+#divGame #indicadorTurno #iconoFlecha.inverse{
+	-webkit-transition: transform 0.2s linear;
+	transform: rotate(180deg);
+}
+
+#divGame canvas {
+	border:solid 1px black;
+	display:block;
+}
+
+
+/**************************************************************************/
+/********************************* ANIMACIONES ****************************/
+ 
 @-webkit-keyframes spin {
 	0%   { 
 		-webkit-transform: rotate(0deg);  /* Chrome, Opera 15+, Safari 3.1+ */
@@ -135,32 +222,4 @@ i#iconoFlecha.inverse{
 		-ms-transform: rotate(360deg);  /* IE 9 */
 		transform: rotate(360deg);  /* Firefox 16+, IE 10+, Opera */
 	}
-}
-#waitingPlayer p{
-	text-align: center;
-	font-size: 1.5em;
-}
-
-#marcadorA {
-	height:100%;
-	max-height:10px;
-	border:1px solid black;
-	min-width:50px;
-	-moz-transition: 2s;
-	-ms-transition: 2s;
-	-o-transition: 2s;
-	-webkit-transition: 2s;
-	transition: 2s;
-}
-
-#marcadorB {
-	height:100%;
-	max-height:10px;
-	border:1px solid black;
-	min-width:50px;
-	-moz-transition: 1s;
-	-ms-transition: 1s;
-	-o-transition: 1s;
-	-webkit-transition: 5s;
-	transition: 5s;
 }
