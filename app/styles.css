@@ -71,7 +71,7 @@ i#iconoFlecha.inverse{
 }
 
 #darkness {
-	display: none;
+	display: auto;
 	position: absolute;
 	top: 0%;
 	left: 0%;
@@ -85,14 +85,28 @@ i#iconoFlecha.inverse{
 }
  
 #lightbox {
-	display: none;
+	display: auto;
 	position: absolute;
 	top: 25%;
 	left: 25%;
 	width: 50%;
 	height: 50%;
-	padding: 16px;
-	border: 16px solid orange;
+	padding: 5px;
+	border: 5px solid mediumturquoise;
+	background-color: white;
+	z-index:1002;
+	overflow: auto;
+}
+
+#lightbox.finish {
+	display: auto;
+	position: absolute;
+	top: 12.5%;
+	left: 12.5%;
+	width: 75%;
+	height: 75%;
+	padding: 5px;
+	border: 5px solid mediumturquoise;
 	background-color: white;
 	z-index:1002;
 	overflow: auto;
@@ -125,4 +139,28 @@ i#iconoFlecha.inverse{
 #waitingPlayer p{
 	text-align: center;
 	font-size: 1.5em;
+}
+
+#marcadorA {
+	height:100%;
+	max-height:10px;
+	border:1px solid black;
+	min-width:50px;
+	-moz-transition: 2s;
+	-ms-transition: 2s;
+	-o-transition: 2s;
+	-webkit-transition: 2s;
+	transition: 2s;
+}
+
+#marcadorB {
+	height:100%;
+	max-height:10px;
+	border:1px solid black;
+	min-width:50px;
+	-moz-transition: 1s;
+	-ms-transition: 1s;
+	-o-transition: 1s;
+	-webkit-transition: 5s;
+	transition: 5s;
 }

@@ -4,10 +4,27 @@
 		<link rel="stylesheet" type="text/css" href="app/styles.css">
 	</head>
 	<body>
-		<div id="lightbox">
-			<a href="http://localhost:8000">Juega de nuevo!</a>
+		<div id="lightbox" style="display:none;">
+			<div style="width:100%;text-align:center;">
+				<h5 id="textoLightbox" style="margin:0;padding:5%;">TEXTO DE PRUEBA</h5>
+			</div>
+			<div id="results" style="display:inline-block;text-align:center;height:60%;width:100%;">
+				<div>
+					<div style="display:inline-block;margin:5px;vertical-align:bottom;">
+						<span> A </span>
+						<div id="marcadorA"></div>
+					</div>
+					<div style="display:inline-block;margin:5px;vertical-align:bottom;">
+						<span> B </span>
+						<div id="marcadorB"></div>
+					</div>
+				</div>
+			</div>
+			<div style="text-align:center;height:10%;">
+				<a href="http://localhost:8000">Juega de nuevo!</a>
+			</div>
 		</div>
-		<div id="darkness"></div>
+		<div id="darkness" style="display:none;"></div>
 		<div id="divInfo">
 			<input type="text" id="username">
 			<input type="color" id="userColor">
@@ -31,17 +48,6 @@
 				<p><span id="userA">Waiting for user</span>: <span id="puntosA"></span></p>
 				<p><span id="userB">Waiting for user</span>: <span id="puntosB"></span></p>
 			</div>
-		</div>
-		<div id="results" style="display:inline-block;">
-			<div style="display:inline-block;margin:5px;vertical-align:bottom;">
-				<span> PLAYER A </span>
-				<div id="marcadorA" style="height:10px;border:1px solid black;"></div>
-			</div>
-			<div style="display:inline-block;margin:5px;vertical-align:bottom;">
-				<span> PLAYER B </span>
-				<div id="marcadorB" style="height:10px;border:1px solid black;"></div>
-			</div>
-			<a href="http://localhost:8000">Empezar</a>
 		</div>
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 		<script src="/socket.io/socket.io.js"></script>

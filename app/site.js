@@ -641,22 +641,25 @@
 		socket.on('partidaFinalizada', function(text){
 			alert(text);
 			$('#divGame').hide(300);
+			$('#darkness').fadeIn(200);
+			$('#lightbox').fadeIn(200);
+			$('#lightbox').addClass('finish');
 			$('#results').show(300);
 			$('#marcadorA').css('background-color', playerA.getColor());
 			$('#marcadorB').css('background-color', playerB.getColor());
-			for(i in cuadrados){
-				if(cuadrados[i].getColor() === playerA.getColor()){
-					$('#marcadorA').css('height', parseInt($('#marcadorA').css('height')) + 20);
-				} else if(cuadrados[i].getColor() === playerB.getColor()){
-					$('#marcadorB').css('height', parseInt($('#marcadorB').css('height')) + 20);
-				}
-			}
+
+			var alturaCalculadaA = (playerA.getPuntos() * 75) / cuadrados.length +"%";
+			console.log("ALTURA PARA A "+alturaCalculadaA);
+			$('#marcadorA').css('max-height', alturaCalculadaA);
+			var alturaCalculadaB = (playerB.getPuntos() * 75) / cuadrados.length +"%";
+			console.log("ALTURA PARA B "+alturaCalculadaB);
+			$('#marcadorB').css('max-height', alturaCalculadaB);
 		});
 		socket.on('squarePainted', function(color, id){
 			cuadrados[id].changeColored();
 		});
 	}
-	
+
 	window.onload = function(){
 		init();
 		$('#divGame').hide();
