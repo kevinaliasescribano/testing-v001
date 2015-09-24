@@ -2,7 +2,7 @@
 	
 	var canvas = $('#canvas')[0];
 	var ctx = canvas.getContext('2d');
-	var socket = io.connect("http://localhost:8000");
+	var socket = io.connect("http://localhost:8000/app/game.hmtl");
 	
 	var colorLineas = 'rgb(230,230,230)';
 	var partidaComenzada = false;
@@ -140,31 +140,6 @@
 					}
 				}
 			}
-			/*
-			if(cuadrados[i].getBordesPintados()[j][0] === 'false'){
-				ctx.fillStyle = colorLineas;
-				if(j === 'top'){
-					// LINEA ARRIBA
-					ctx.moveTo(cuadrados[i].areaAbarcada()[0],cuadrados[i].areaAbarcada()[2]);
-					ctx.lineTo(cuadrados[i].areaAbarcada()[1],cuadrados[i].areaAbarcada()[2]);
-				}
-				if(j === 'right'){
-					// LINEA DERECHA
-					ctx.moveTo(cuadrados[i].areaAbarcada()[1],cuadrados[i].areaAbarcada()[2]);
-					ctx.lineTo(cuadrados[i].areaAbarcada()[1],cuadrados[i].areaAbarcada()[3]);
-				}
-				if(j === 'bottom'){
-					// LINEA ABAJO
-					ctx.moveTo(cuadrados[i].areaAbarcada()[0],cuadrados[i].areaAbarcada()[3]);
-					ctx.lineTo(cuadrados[i].areaAbarcada()[1],cuadrados[i].areaAbarcada()[3]);
-				}
-				if(j === 'left'){
-					// LINEA IZQUIERDA
-					ctx.moveTo(cuadrados[i].areaAbarcada()[0],cuadrados[i].areaAbarcada()[2]);
-					ctx.lineTo(cuadrados[i].areaAbarcada()[0],cuadrados[i].areaAbarcada()[3]);
-				}
-			}
-			*/
 			ctx.stroke();
 		}
 		paintStop = true;
@@ -203,7 +178,6 @@
 			this.bordesPintados = bordesPintados;
 		}
 		
-		// 0 arriba, 1 derecha, 2 abajo, 3 izquierda
 		this.pintarBorde = function(numeroBorde){
 			this.bordesPintados[numeroBorde] = true;
 		}
@@ -518,17 +492,13 @@
 					completed = true;
 					for(j in cuadrados){
 						if(cuadrados[j].getColored() === false){
-							//console.log(j);
-							//console.log(cuadrados[j].getColored());
 							completed = false;
 						}
 					}
-					//console.log(completed);
 					if(completed){
 						socket.emit('finalizarPartida', playerA.getPuntos(), playerB.getPuntos());
 					}
 				}
-				//console.log(cuadrados[i]);
 			}
 		
 			if(changeTurn){
@@ -537,11 +507,6 @@
 		}
 		
 		paintStop = false;
-	}
-
-	function restartGame(){
-		$('#divGame').hide();
-		$('#divInfo').show();
 	}
 
 	function act(){
@@ -631,7 +596,6 @@
 		});
 		socket.on('infoLeave', function(userLeave){
 			alert("El usuario "+userLeave+" ha abandonado la partida.");
-			//restartGame();
 			$('#lightbox').fadeIn(200);
 			$('#darkness').fadeIn(200);
 		});
@@ -664,6 +628,7 @@
 		$('#waitingPlayer').hide();
 		$('#lightbox').hide();
 		$('#darkness').hide();
+		$('#results').hide();
 	}
 	
 	document.addEventListener('keyup', function(evt){
