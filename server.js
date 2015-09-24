@@ -205,7 +205,7 @@ io.on('connection', function(socket){
 function MyServer(request,response){
 	var filePath = '.' + request.url;
 	if (filePath == './'){
-		filePath = './app/pruebacanvas3.html';
+		filePath = './app/game.html';
 	}
 	var extname = filePath.substr(filePath.lastIndexOf('.'));
 	var contentType = contentTypes[extname];
