@@ -1,9 +1,14 @@
 'use strict';
 var serverPort = process.env.PORT || 8000;
-var http = require('http').createServer(MyServer);
+var http = require('http');
+var express = require('express');
+var app = express();
+var serverCreated = app.listen(serverPort);
 var fs = require('fs');
-var io = require('socket.io').listen(http);
+var fs = require('fs');
+var io = require('socket.io').listen(serverCreated);
 var pg = require('pg');	
+var router = express.Router();
 var url_database = 'postgres://vqirkyzfmaagxq:TDNwprpRbTWJosQdqP-1YdjjU8@ec2-54-217-240-205.eu-west-1.compute.amazonaws.com:5432/ddmftfl54cvb0t?ssl=true';
 var nSight = 0;
 var rooms = {
@@ -75,9 +80,9 @@ var contentTypes={	".html":"text/html",
 					".ico":"image/x-icon"
 				};
 
-http.listen(serverPort, function(){ 
-	console.log('Server running at http://localhost:' + serverPort); 
-}); 
+//http.listen(serverPort, function(){ 
+//	console.log('Server running at http://localhost:' + serverPort); 
+//}); 
 
 
 io.on('connection', function(socket){
@@ -233,12 +238,40 @@ function MyServer(request,response){
 	});
 }
 
-console.log(process.env.DATABASE_URL);
-
-
 pg.connect(url_database, function(err, client) {
-  if (err) throw err;
-  console.log('Connected to postgres! Creating tables...');
+	if (err) throw err;
+	console.log('Connected to postgres! Creating tables...');
+
+	router.get('/getUsers', function(req,res){
+		var respuesta = [];
+		client
+			.query('SELECT * FROM usuarios')
+			.on('row', function(row){
+				respuesta.push(row);
+			})
+			.on('end', function(){
+				res.send(respuesta);
+			});	
+	});
+
+	router.get('/addUser', function(req,res){
+		client
+			.query("INSERT INTO usuarios VALUES(1, 'Kevin')");
+		res.send("USUARIO INSERTADO");
+	});
+
+	router.get('/delTable', function(req,res){
+		client
+			.query('DROP TABLE usuarios');
+		res.send("TABLA USUARIOS ELIMINADA");
+	});
+
+	router.get('/createTable', function(req,res){
+		client
+			.query('CREATE TABLE usuarios(id int, nombre varchar(20))');
+		res.send("TABLA USUARIOS CREADA");
+	});
+
 
 	//client
 	//	.query('CREATE TABLE IF NOT EXISTS prueba(col1 int, col2 int)');
@@ -262,3 +295,23 @@ pg.connect(url_database, function(err, client) {
 	//});
 
 });
+
+router.get('/', function(req,res){
+	res.sendFile(__dirname + '/app/index.html');
+});
+
+router.get('/main', function(req,res){
+	res.sendFile(__dirname + '/app/main.html');
+});
+
+router.get('/game', function(req,res){
+	res.sendFile(__dirname + '/app/game.html');
+});
+
+app.use("/app", express.static(__dirname + '/app'));
+
+app.use(router);
+
+//app.listen(serverPort);
+//app.listen(serverPort);
+//serverCreated.listen(serverPort);
