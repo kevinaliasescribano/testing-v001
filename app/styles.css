@@ -223,3 +223,67 @@
 		transform: rotate(360deg);  /* Firefox 16+, IE 10+, Opera */
 	}
 }
+
+/**************************************************************************/
+/************************** ESTILOS PARA LOGIN FORM ****************************/
+
+.loginForm{
+	display:none;
+}
+
+.loginForm table{
+	width:70%;
+	margin-left:auto;
+	margin-right:auto;
+	text-align:center;
+}
+
+.loginForm table tr td button{
+	width:20%;
+	margin:0 4%;
+}
+
+/**************************************************************************/
+/************************** ESTILOS PARA REGIS FORM ****************************/
+
+.regisForm{
+	display:none;
+}
+
+.regisForm table{
+	width:40%;
+	margin-left:auto;
+	margin-right:auto;
+	text-align:center;
+}
+
+.regisForm table tr td{
+	width:50%;
+}
+
+.regisForm table tr td input.denegate{
+	border:red 1px solid;
+}
+
+/**************************************************************************/
+/************************** ESTILOS PARA BUTTONSPACES ****************************/
+
+.buttonSpaces{
+	width:50%;
+	margin-left:auto;
+	margin-right:auto;
+	text-align:center;
+}
+
+.buttonSpaces button{
+	margin:0 8%;width:20%;
+}
+
+/**************************************************************************/
+/************************** ESTILOS PARA MAINDIV ****************************/
+
+#mainDiv{
+	width:80%;
+	margin-left:auto;
+	margin-right:auto;
+}

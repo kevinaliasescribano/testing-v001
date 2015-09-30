@@ -80,11 +80,6 @@ var contentTypes={	".html":"text/html",
 					".ico":"image/x-icon"
 				};
 
-//http.listen(serverPort, function(){ 
-//	console.log('Server running at http://localhost:' + serverPort); 
-//}); 
-
-
 io.on('connection', function(socket){
 
 	var roomSelected;
@@ -208,7 +203,7 @@ io.on('connection', function(socket){
 		io.sockets.emit('squarePainted', color, id);
 	});
 });
-
+/*
 function MyServer(request,response){
 	var filePath = '.' + request.url;
 	if (filePath == './'){
@@ -237,10 +232,15 @@ function MyServer(request,response){
 		}
 	});
 }
+*/
 
 pg.connect(url_database, function(err, client) {
 	if (err) throw err;
 	console.log('Connected to postgres! Creating tables...');
+	console.log("Creating \"usuarios\"");
+	client
+		.query('CREATE TABLE IF NOT EXISTS usuarios(id int, nombre varchar(30),email varchar(50),password varchar(30),partidasJugadas int,partidasGanadas int,abandonos int)');
+
 
 	router.get('/getUsers', function(req,res){
 		var respuesta = [];
@@ -254,9 +254,34 @@ pg.connect(url_database, function(err, client) {
 			});	
 	});
 
+	router.get('/getUserByMail/:mail', function(req,res){
+		var respuesta = [];
+		var mailFiltered = req.params.mail;
+		client
+			.query("SELECT * FROM usuarios WHERE email=($1)", [mailFiltered])
+			.on('row', function(row){
+				respuesta.push(row);
+			})
+			.on('end', function(){
+				res.send(respuesta);
+			});
+	});
+
+	router.get('/postUser/:id/:nombre/:email/:password', function(req, res){
+		var id = req.params.id;
+		var nombre = req.params.nombre;
+		var email = req.params.email;
+		var password = req.params.password;
+		client
+			.query("INSERT INTO usuarios VALUES (($1),($2),($3),($4), 0, 0, 0)", [id, nombre, email, password])
+			.on('end', function(){
+				res.send(true);
+			});
+	});
+
 	router.get('/addUser', function(req,res){
 		client
-			.query("INSERT INTO usuarios VALUES(1, 'Kevin')");
+			.query("INSERT INTO usuarios VALUES(1, 'Kevin', 'prueba@gmail.com', 'patata123', 3, 2, 0)");
 		res.send("USUARIO INSERTADO");
 	});
 
@@ -266,34 +291,6 @@ pg.connect(url_database, function(err, client) {
 		res.send("TABLA USUARIOS ELIMINADA");
 	});
 
-	router.get('/createTable', function(req,res){
-		client
-			.query('CREATE TABLE usuarios(id int, nombre varchar(20))');
-		res.send("TABLA USUARIOS CREADA");
-	});
-
-
-	//client
-	//	.query('CREATE TABLE IF NOT EXISTS prueba(col1 int, col2 int)');
-
-	//client
-	//	.query('DROP TABLE prueba');
-	
-	//client
-	//	.query('INSERT INTO prueba VALUES (1, 2)')
-	//	.on('row', function(row) {
-	//		console.log(JSON.stringify(row));
-	//});
-
-	//client
-	//	.query('SELECT * FROM prueba')
-	//	.on('row', function(row) {
-	//		console.log(row.col1);
-	//	})
-	//	.on('end',function(){
-	//		client.end();
-	//});
-
 });
 
 router.get('/', function(req,res){
@@ -301,6 +298,8 @@ router.get('/', function(req,res){
 });
 
 router.get('/main', function(req,res){
+	req.session.user = req.params.email;
+	console.log(req.session.user);
 	res.sendFile(__dirname + '/app/main.html');
 });
 
@@ -311,7 +310,3 @@ router.get('/game', function(req,res){
 app.use("/app", express.static(__dirname + '/app'));
 
 app.use(router);
-
-//app.listen(serverPort);
-//app.listen(serverPort);
-//serverCreated.listen(serverPort);
