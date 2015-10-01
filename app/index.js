@@ -25,7 +25,19 @@ $('#botonPrueba').on('click', function(){
 });
 
 $('.options').on('click', function(){
-	$('.options').slideUp(300);
+	$('#mainDiv').slideUp(300);
+	if($(this).attr('id') === "opcion1"){
+		$('#stats').slideDown(300);
+		$.ajax({
+			url: "/getRanking"
+		})
+		.done(function(data){
+			for(i in data){
+				$('#stats table').append("<tr><td>"+data[i].nombre+"</td><td>"+data[i].partidasjugadas+"</td><td>"+data[i].partidasganadas+"</td></tr>")
+			}
+		});
+		
+	}
 });
 
 $('#makeRegis').on('click', function(){
@@ -59,15 +71,18 @@ $('#toLogin').on('click', function(){
 	$('.buttonSpace').slideUp(300);
 	$('.loginForm').slideDown(300);
 });
+
 $('#toRegis').on('click', function(){
 	$('.buttonSpace').slideUp(300);
 	$('.regisForm').slideDown(300);
 });
+
 $('.goBack').on('click', function(){
 	$('.regisForm').slideUp(300);
 	$('.loginForm').slideUp(300);
 	$('.buttonSpace').slideDown(300);
 });
+
 $('#salir').on('click', function(){
 	$.ajax({
 		url: "/sessionDestroy"
@@ -77,4 +92,10 @@ $('#salir').on('click', function(){
 			window.location.replace("/");
 		}
 	});
+});
+
+$('.return').on('click', function(){
+	$(this).parent().parent().slideUp(300);
+	$('#stats table td').parent().remove();
+	$('#mainDiv').slideDown(300);
 });

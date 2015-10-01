@@ -217,18 +217,22 @@ pg.connect(url_database, function(err, client) {
 });
 
 router.get('/getUsers', function(req,res){
-	var respuesta = [];
-	pg.connect(url_database, function(err, client) {
-		client
-			.query('SELECT * FROM usuarios')
-			.on('row', function(row){
-				respuesta.push(row);
-			})
-			.on('end', function(){
-				res.send(respuesta);
-				client.end();
-			});	
-	});
+	if(req.session.email === "asd"){
+		var respuesta = [];
+		pg.connect(url_database, function(err, client) {
+			client
+				.query('SELECT * FROM usuarios')
+				.on('row', function(row){
+					respuesta.push(row);
+				})
+				.on('end', function(){
+					res.send(respuesta);
+					client.end();
+				});	
+		});
+	} else {
+		res.status(404).send("Cannot GET "+req.url);
+	}
 });
 
 router.get('/getUserByMail/:mail', function(req,res){
@@ -257,18 +261,33 @@ router.get('/sessionDestroy', function(req,res){
 	res.send(true);
 });
 
+router.get('/getRanking', function(req,res){
+	var respuesta = [];
+	pg.connect(url_database, function(err, client) {
+	client
+		.query("SELECT nombre, partidasJugadas, partidasGanadas FROM usuarios ORDER BY partidasGanadas DESC limit 10")
+		.on('row', function(row){
+			respuesta.push(row);
+		})
+		.on('end', function(){
+			res.send(respuesta);
+			client.end();
+		});
+	});
+});
+
 router.get('/postUser/:id/:nombre/:email/:password', function(req, res){
 	var id = req.params.id;
 	var nombre = req.params.nombre;
 	var email = req.params.email;
 	var password = req.params.password;
 	pg.connect(url_database, function(err, client) {
-	client
-		.query("INSERT INTO usuarios VALUES (($1),($2),($3),($4), 0, 0, 0)", [id, nombre, email, password])
-		.on('end', function(){
-			res.send(true);
-			client.end();
-		});
+		client
+			.query("INSERT INTO usuarios VALUES (($1),($2),($3),($4), 0, 0, 0)", [id, nombre, email, password])
+			.on('end', function(){
+				res.send(true);
+				client.end();
+			});
 	});
 });
 
