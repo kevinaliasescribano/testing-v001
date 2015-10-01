@@ -2,9 +2,9 @@
 var serverPort = process.env.PORT || 8000;
 var http = require('http');
 var express = require('express');
+var session = require('express-session');
 var app = express();
 var serverCreated = app.listen(serverPort);
-var fs = require('fs');
 var fs = require('fs');
 var io = require('socket.io').listen(serverCreated);
 var pg = require('pg');	
@@ -203,47 +203,22 @@ io.on('connection', function(socket){
 		io.sockets.emit('squarePainted', color, id);
 	});
 });
-/*
-function MyServer(request,response){
-	var filePath = '.' + request.url;
-	if (filePath == './'){
-		filePath = './app/index.html';
-	}
-	var extname = filePath.substr(filePath.lastIndexOf('.'));
-	var contentType = contentTypes[extname];
-	if(!contentType){
-		contentType = 'application/octet-stream';
-	}
-	
-	fs.exists(filePath, function(exists){ 
-		if(exists){
-			fs.readFile(filePath, function(error, content){
-				if(error){
-					response.writeHead(500, { 'Content-Type': 'text/html' });
-					response.end('<h1>500 Internal Server Error</h1>');
-				} else{
-					response.writeHead(200, { 'Content-Type': contentType });
-					response.end(content, 'utf-8');
-				}
-			}); 
-		} else {
-			response.writeHead(404, { 'Content-Type': 'text/html' });
-			response.end('<h1>404 Not Found</h1>');
-		}
-	});
-}
-*/
+
+app.use(session({secret: 'secretito'}));
 
 pg.connect(url_database, function(err, client) {
-	if (err) throw err;
 	console.log('Connected to postgres! Creating tables...');
 	console.log("Creating \"usuarios\"");
 	client
-		.query('CREATE TABLE IF NOT EXISTS usuarios(id int, nombre varchar(30),email varchar(50),password varchar(30),partidasJugadas int,partidasGanadas int,abandonos int)');
+		.query('CREATE TABLE IF NOT EXISTS usuarios(id int, nombre varchar(30),email varchar(50),password varchar(30),partidasJugadas int,partidasGanadas int,abandonos int)')
+		.on('end', function(){
+			client.end();
+		});
+});
 
-
-	router.get('/getUsers', function(req,res){
-		var respuesta = [];
+router.get('/getUsers', function(req,res){
+	var respuesta = [];
+	pg.connect(url_database, function(err, client) {
 		client
 			.query('SELECT * FROM usuarios')
 			.on('row', function(row){
@@ -251,46 +226,72 @@ pg.connect(url_database, function(err, client) {
 			})
 			.on('end', function(){
 				res.send(respuesta);
+				client.end();
 			});	
 	});
+});
 
-	router.get('/getUserByMail/:mail', function(req,res){
-		var respuesta = [];
-		var mailFiltered = req.params.mail;
-		client
-			.query("SELECT * FROM usuarios WHERE email=($1)", [mailFiltered])
-			.on('row', function(row){
-				respuesta.push(row);
-			})
-			.on('end', function(){
-				res.send(respuesta);
-			});
+router.get('/getUserByMail/:mail', function(req,res){
+	var respuesta = [];
+	var mailFiltered = req.params.mail;
+	pg.connect(url_database, function(err, client) {
+	client
+		.query("SELECT * FROM usuarios WHERE email=($1)", [mailFiltered])
+		.on('row', function(row){
+			respuesta.push(row);
+		})
+		.on('end', function(){
+			res.send(respuesta);
+			client.end();
+		});
 	});
+});
 
-	router.get('/postUser/:id/:nombre/:email/:password', function(req, res){
-		var id = req.params.id;
-		var nombre = req.params.nombre;
-		var email = req.params.email;
-		var password = req.params.password;
-		client
-			.query("INSERT INTO usuarios VALUES (($1),($2),($3),($4), 0, 0, 0)", [id, nombre, email, password])
-			.on('end', function(){
-				res.send(true);
-			});
+router.get('/setSessionUser/:mail', function(req,res){
+	req.session.email = req.params.mail;
+	res.send(true);
+});
+
+router.get('/sessionDestroy', function(req,res){
+	req.session.destroy();
+	res.send(true);
+});
+
+router.get('/postUser/:id/:nombre/:email/:password', function(req, res){
+	var id = req.params.id;
+	var nombre = req.params.nombre;
+	var email = req.params.email;
+	var password = req.params.password;
+	pg.connect(url_database, function(err, client) {
+	client
+		.query("INSERT INTO usuarios VALUES (($1),($2),($3),($4), 0, 0, 0)", [id, nombre, email, password])
+		.on('end', function(){
+			res.send(true);
+			client.end();
+		});
 	});
+});
 
-	router.get('/addUser', function(req,res){
+router.get('/addUser', function(req,res){
+	pg.connect(url_database, function(err, client) {
 		client
-			.query("INSERT INTO usuarios VALUES(1, 'Kevin', 'prueba@gmail.com', 'patata123', 3, 2, 0)");
+			.query("INSERT INTO usuarios VALUES(1, 'Kevin', 'prueba@gmail.com', 'patata123', 3, 2, 0)")
+			.on('end', function(){
+				client.end();
+			});
 		res.send("USUARIO INSERTADO");
 	});
+});
 
-	router.get('/delTable', function(req,res){
+router.get('/delTable', function(req,res){
+	pg.connect(url_database, function(err, client) {
 		client
-			.query('DROP TABLE usuarios');
+			.query('DROP TABLE usuarios')
+			.on('end', function(){
+				client.end();
+			});
 		res.send("TABLA USUARIOS ELIMINADA");
 	});
-
 });
 
 router.get('/', function(req,res){
@@ -298,13 +299,19 @@ router.get('/', function(req,res){
 });
 
 router.get('/main', function(req,res){
-	req.session.user = req.params.email;
-	console.log(req.session.user);
-	res.sendFile(__dirname + '/app/main.html');
+	if(req.session.email !== undefined){
+		res.sendFile(__dirname + '/app/main.html');
+	} else {
+		res.redirect("/");
+	}
 });
 
 router.get('/game', function(req,res){
-	res.sendFile(__dirname + '/app/game.html');
+	if(req.session.email !== undefined){
+		res.sendFile(__dirname + '/app/game.html');
+	} else {
+		res.redirect("/");
+	}
 });
 
 app.use("/app", express.static(__dirname + '/app'));

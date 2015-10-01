@@ -1,7 +1,3 @@
-$('#salir').on('click', function(){
-	window.location.replace("/");
-});
-
 $('#botonPrueba').on('click', function(){
 	var email = $('.loginForm input[name="mail"]').val();
 	var pass = $('.loginForm input[name="pass"]').val();
@@ -71,4 +67,14 @@ $('.goBack').on('click', function(){
 	$('.regisForm').slideUp(300);
 	$('.loginForm').slideUp(300);
 	$('.buttonSpace').slideDown(300);
+});
+$('#salir').on('click', function(){
+	$.ajax({
+		url: "/sessionDestroy"
+	})
+	.done(function(data){
+		if(data){
+			window.location.replace("/");
+		}
+	});
 });
