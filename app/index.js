@@ -10,7 +10,7 @@ $('#botonPrueba').on('click', function(){
 		} else {
 			if(data[0].password === pass){
 				$.ajax({
-					url: '/setSessionUser/'+email
+					url: '/setSessionUser/'+email+'/'+data[0].nombre
 				})
 				.done(function(data){
 					if(data){
@@ -28,15 +28,53 @@ $('.options').on('click', function(){
 	$('#mainDiv').slideUp(300);
 	if($(this).attr('id') === "opcion1"){
 		$('#stats').slideDown(300);
-		$.ajax({
-			url: "/getRanking"
-		})
-		.done(function(data){
-			for(i in data){
-				$('#stats table').append("<tr><td>"+data[i].nombre+"</td><td>"+data[i].partidasjugadas+"</td><td>"+data[i].partidasganadas+"</td></tr>")
-			}
-		});
+		if($('#stats table tr').length <= 1){
+			$.ajax({
+				url: "/getRanking"
+			})
+			.done(function(data){
+				var existsInRanking = false;
+				var mailToFilter;
+				for(i in data){
+					if(i < data.length - 1){
+						// REDONDEO A 2 DECIMALES
+						var percentaje = Math.round(data[i].partidasganadas/data[i].partidasjugadas*100*100) / 100;
+						if(isNaN(percentaje)){
+							percentaje = 0;
+						}
+						$('#stats table').append("<tr><td>"+(parseInt(i)+1)+"</td><td>"+data[i].nombre+"</td><td>"+data[i].partidasjugadas+"</td><td>"+data[i].partidasganadas+"</td><td>"+percentaje+"%</td></tr>");
+					} 
+					if(data[data.length-1] === data[i].nombre){
+						existsInRanking = true;
+						$('#stats table tr').last().css('background-color','yellow');
+					}
+				}
+				if(!existsInRanking){
+					var mailToFilter = data[data.length-1];
+					$.ajax({
+						url: "/getUserByMail/"+mailToFilter
+					})
+					.done(function(data2){
+						var percentaje = Math.round(data2[0].partidasganadas/data2[0].partidasjugadas*100*100) / 100;
+						if(isNaN(percentaje)){
+							percentaje = 0;
+						}
+						$.ajax({
+							url: "/getUserPosition/"+mailToFilter,
+						})
+						.done(function(data3){
+							var position = parseInt(data3.indexOf(mailToFilter)) + 1;
+							$('#stats table').append("<tr><td>"+position+"</td><td>"+data2[0].nombre+"</td><td>"+data2[0].partidasjugadas+"</td><td>"+data2[0].partidasganadas+"</td><td>"+percentaje+"%</td></tr>");
+							$('#stats table tr').last().css('background-color','yellow');
+						})
+					});
+				}
+			});
+		}
 		
+	}
+	if($(this).attr('id') === "opcion2"){
+		window.location.replace("/game");
 	}
 });
 
@@ -96,6 +134,5 @@ $('#salir').on('click', function(){
 
 $('.return').on('click', function(){
 	$(this).parent().parent().slideUp(300);
-	$('#stats table td').parent().remove();
 	$('#mainDiv').slideDown(300);
 });

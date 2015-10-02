@@ -251,8 +251,9 @@ router.get('/getUserByMail/:mail', function(req,res){
 	});
 });
 
-router.get('/setSessionUser/:mail', function(req,res){
+router.get('/setSessionUser/:mail/:nombre', function(req,res){
 	req.session.email = req.params.mail;
+	req.session.nombre = req.params.nombre;
 	res.send(true);
 });
 
@@ -265,9 +266,26 @@ router.get('/getRanking', function(req,res){
 	var respuesta = [];
 	pg.connect(url_database, function(err, client) {
 	client
-		.query("SELECT nombre, partidasJugadas, partidasGanadas FROM usuarios ORDER BY partidasGanadas DESC limit 10")
+		.query("SELECT email, nombre, partidasJugadas, partidasGanadas FROM usuarios ORDER BY partidasGanadas DESC limit 10")
 		.on('row', function(row){
 			respuesta.push(row);
+		})
+		.on('end', function(){
+			respuesta.push(req.session.nombre);
+			res.send(respuesta);
+			client.end();
+		});
+	});
+});
+
+router.get('/getUserPosition/:mail', function(req,res){
+	var respuesta = [];
+	var usuario = req.params.mail;
+	pg.connect(url_database, function(err, client) {
+	client
+		.query("SELECT email, partidasGanadas FROM usuarios ORDER BY partidasGanadas DESC")
+		.on('row', function(row){
+			respuesta.push(row.email);
 		})
 		.on('end', function(){
 			res.send(respuesta);
@@ -314,7 +332,11 @@ router.get('/delTable', function(req,res){
 });
 
 router.get('/', function(req,res){
-	res.sendFile(__dirname + '/app/index.html');
+	if(req.session.email === undefined){
+		res.sendFile(__dirname + '/app/index.html');
+	} else {
+		res.redirect("/main");
+	}
 });
 
 router.get('/main', function(req,res){
