@@ -136,3 +136,12 @@ $('.return').on('click', function(){
 	$(this).parent().parent().slideUp(300);
 	$('#mainDiv').slideDown(300);
 });
+
+$(document).on({
+	ajaxStart: function(){
+		$('body').addClass('loading');
+	},
+	ajaxStop: function(){
+		$('body').removeClass('loading');
+	}
+});

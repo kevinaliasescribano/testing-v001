@@ -212,149 +212,141 @@ pg.connect(url_database, function(err, client) {
 	client
 		.query('CREATE TABLE IF NOT EXISTS usuarios(id int, nombre varchar(30),email varchar(50),password varchar(30),partidasJugadas int,partidasGanadas int,abandonos int)')
 		.on('end', function(){
-			client.end();
 		});
-});
 
-router.get('/getUsers', function(req,res){
-	if(req.session.email === "asd"){
+	router.get('/getUsers', function(req,res){
+		if(req.session.email === "asd"){
+			var respuesta = [];
+			//pg.connect(url_database, function(err, client) {
+				client
+					.query('SELECT * FROM usuarios')
+					.on('row', function(row){
+						respuesta.push(row);
+					})
+					.on('end', function(){
+						res.send(respuesta);
+					});	
+			//});
+		} else {
+			res.status(404).send("Cannot GET "+req.url);
+		}
+	});
+
+	router.get('/getUserByMail/:mail', function(req,res){
 		var respuesta = [];
-		pg.connect(url_database, function(err, client) {
+		var mailFiltered = req.params.mail;
+		//pg.connect(url_database, function(err, client) {
+		client
+			.query("SELECT * FROM usuarios WHERE email=($1)", [mailFiltered])
+			.on('row', function(row){
+				respuesta.push(row);
+			})
+			.on('end', function(){
+				res.send(respuesta);
+			});
+		//});
+	});
+
+	router.get('/setSessionUser/:mail/:nombre', function(req,res){
+		req.session.email = req.params.mail;
+		req.session.nombre = req.params.nombre;
+		res.send(true);
+	});
+
+	router.get('/sessionDestroy', function(req,res){
+		req.session.destroy();
+		res.send(true);
+	});
+
+	router.get('/getRanking', function(req,res){
+		var respuesta = [];
+		//pg.connect(url_database, function(err, client) {
+		client
+			.query("SELECT email, nombre, partidasJugadas, partidasGanadas FROM usuarios ORDER BY partidasGanadas DESC limit 10")
+			.on('row', function(row){
+				respuesta.push(row);
+			})
+			.on('end', function(){
+				respuesta.push(req.session.nombre);
+				res.send(respuesta);
+			});
+		//});
+	});
+
+	router.get('/getUserPosition/:mail', function(req,res){
+		var respuesta = [];
+		var usuario = req.params.mail;
+		//pg.connect(url_database, function(err, client) {
+		client
+			.query("SELECT email, partidasGanadas FROM usuarios ORDER BY partidasGanadas DESC")
+			.on('row', function(row){
+				respuesta.push(row.email);
+			})
+			.on('end', function(){
+				res.send(respuesta);
+			});
+		//});
+	});
+
+	router.get('/postUser/:id/:nombre/:email/:password', function(req, res){
+		var id = req.params.id;
+		var nombre = req.params.nombre;
+		var email = req.params.email;
+		var password = req.params.password;
+		//pg.connect(url_database, function(err, client) {
 			client
-				.query('SELECT * FROM usuarios')
-				.on('row', function(row){
-					respuesta.push(row);
-				})
+				.query("INSERT INTO usuarios VALUES (($1),($2),($3),($4), 0, 0, 0)", [id, nombre, email, password])
 				.on('end', function(){
-					res.send(respuesta);
-					client.end();
-				});	
-		});
-	} else {
-		res.status(404).send("Cannot GET "+req.url);
-	}
-});
-
-router.get('/getUserByMail/:mail', function(req,res){
-	var respuesta = [];
-	var mailFiltered = req.params.mail;
-	pg.connect(url_database, function(err, client) {
-	client
-		.query("SELECT * FROM usuarios WHERE email=($1)", [mailFiltered])
-		.on('row', function(row){
-			respuesta.push(row);
-		})
-		.on('end', function(){
-			res.send(respuesta);
-			client.end();
-		});
+					res.send(true);
+				});
+		//});
 	});
-});
 
-router.get('/setSessionUser/:mail/:nombre', function(req,res){
-	req.session.email = req.params.mail;
-	req.session.nombre = req.params.nombre;
-	res.send(true);
-});
-
-router.get('/sessionDestroy', function(req,res){
-	req.session.destroy();
-	res.send(true);
-});
-
-router.get('/getRanking', function(req,res){
-	var respuesta = [];
-	pg.connect(url_database, function(err, client) {
-	client
-		.query("SELECT email, nombre, partidasJugadas, partidasGanadas FROM usuarios ORDER BY partidasGanadas DESC limit 10")
-		.on('row', function(row){
-			respuesta.push(row);
-		})
-		.on('end', function(){
-			respuesta.push(req.session.nombre);
-			res.send(respuesta);
-			client.end();
-		});
+	router.get('/addUser', function(req,res){
+		//pg.connect(url_database, function(err, client) {
+			client
+				.query("INSERT INTO usuarios VALUES(1, 'Kevin', 'prueba@gmail.com', 'patata123', 3, 2, 0)")
+				.on('end', function(){
+				});
+			res.send("USUARIO INSERTADO");
+		//});
 	});
-});
 
-router.get('/getUserPosition/:mail', function(req,res){
-	var respuesta = [];
-	var usuario = req.params.mail;
-	pg.connect(url_database, function(err, client) {
-	client
-		.query("SELECT email, partidasGanadas FROM usuarios ORDER BY partidasGanadas DESC")
-		.on('row', function(row){
-			respuesta.push(row.email);
-		})
-		.on('end', function(){
-			res.send(respuesta);
-			client.end();
-		});
+	router.get('/delTable', function(req,res){
+		//pg.connect(url_database, function(err, client) {
+			client
+				.query('DROP TABLE usuarios')
+				.on('end', function(){
+				});
+			res.send("TABLA USUARIOS ELIMINADA");
+		//});
 	});
-});
 
-router.get('/postUser/:id/:nombre/:email/:password', function(req, res){
-	var id = req.params.id;
-	var nombre = req.params.nombre;
-	var email = req.params.email;
-	var password = req.params.password;
-	pg.connect(url_database, function(err, client) {
-		client
-			.query("INSERT INTO usuarios VALUES (($1),($2),($3),($4), 0, 0, 0)", [id, nombre, email, password])
-			.on('end', function(){
-				res.send(true);
-				client.end();
-			});
+	router.get('/', function(req,res){
+		if(req.session.email === undefined){
+			res.sendFile(__dirname + '/app/index.html');
+		} else {
+			res.redirect("/main");
+		}
 	});
-});
 
-router.get('/addUser', function(req,res){
-	pg.connect(url_database, function(err, client) {
-		client
-			.query("INSERT INTO usuarios VALUES(1, 'Kevin', 'prueba@gmail.com', 'patata123', 3, 2, 0)")
-			.on('end', function(){
-				client.end();
-			});
-		res.send("USUARIO INSERTADO");
+	router.get('/main', function(req,res){
+		if(req.session.email !== undefined){
+			res.sendFile(__dirname + '/app/main.html');
+		} else {
+			res.redirect("/");
+		}
 	});
-});
 
-router.get('/delTable', function(req,res){
-	pg.connect(url_database, function(err, client) {
-		client
-			.query('DROP TABLE usuarios')
-			.on('end', function(){
-				client.end();
-			});
-		res.send("TABLA USUARIOS ELIMINADA");
+	router.get('/game', function(req,res){
+		if(req.session.email !== undefined){
+			res.sendFile(__dirname + '/app/game.html');
+		} else {
+			res.redirect("/");
+		}
 	});
-});
 
-router.get('/', function(req,res){
-	if(req.session.email === undefined){
-		res.sendFile(__dirname + '/app/index.html');
-	} else {
-		res.redirect("/main");
-	}
 });
-
-router.get('/main', function(req,res){
-	if(req.session.email !== undefined){
-		res.sendFile(__dirname + '/app/main.html');
-	} else {
-		res.redirect("/");
-	}
-});
-
-router.get('/game', function(req,res){
-	if(req.session.email !== undefined){
-		res.sendFile(__dirname + '/app/game.html');
-	} else {
-		res.redirect("/");
-	}
-});
-
 app.use("/app", express.static(__dirname + '/app'));
 
 app.use(router);
