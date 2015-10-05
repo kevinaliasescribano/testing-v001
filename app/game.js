@@ -528,7 +528,12 @@
 		run();
 		enableSockets();
 		$('#goButton').on('click',function(){
-			socket.emit('join',$('#username').val(), $('#userColor').val());
+			$.ajax({
+				url: "/getThisUsername"
+			})
+			.done(function(data){
+				socket.emit('join',data, $('#userColor').val());
+			});
 			$('#divInfo').hide();
 			paintStop = false;
 		});
