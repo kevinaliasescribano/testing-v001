@@ -139,7 +139,6 @@ io.on('connection', function(socket){
 	});
 	
 	socket.on('join', function(username, color){
-		console.log(username);
 		if(roomSelected.playerA === ''){
 			roomSelected.playerA = "A";
 			socket.username = "A";
@@ -258,7 +257,6 @@ io.on('connection', function(socket){
 	router.get('/getUsers', function(req,res){
 		if(req.session.email === "asd"){
 			var respuesta = [];
-			//pg.connect(url_database, function(err, client) {
 				client
 					.query('SELECT * FROM usuarios')
 					.on('row', function(row){
@@ -267,7 +265,6 @@ io.on('connection', function(socket){
 					.on('end', function(){
 						res.send(respuesta);
 					});	
-			//});
 		} else {
 			res.status(404).send("Cannot GET "+req.url);
 		}
@@ -276,7 +273,6 @@ io.on('connection', function(socket){
 	router.get('/getUserByMail/:mail', function(req,res){
 		var respuesta = [];
 		var mailFiltered = req.params.mail;
-		//pg.connect(url_database, function(err, client) {
 		client
 			.query("SELECT * FROM usuarios WHERE email=($1)", [mailFiltered])
 			.on('row', function(row){
@@ -285,7 +281,6 @@ io.on('connection', function(socket){
 			.on('end', function(){
 				res.send(respuesta);
 			});
-		//});
 	});
 
 	router.get('/getThisUsername', function(req,res){
@@ -305,7 +300,6 @@ io.on('connection', function(socket){
 
 	router.get('/getRanking', function(req,res){
 		var respuesta = [];
-		//pg.connect(url_database, function(err, client) {
 		client
 			.query("SELECT email, nombre, partidasJugadas, partidasGanadas FROM usuarios ORDER BY partidasGanadas DESC limit 10")
 			.on('row', function(row){
@@ -315,13 +309,11 @@ io.on('connection', function(socket){
 				respuesta.push(req.session.nombre);
 				res.send(respuesta);
 			});
-		//});
 	});
 
 	router.get('/getUserPosition/:mail', function(req,res){
 		var respuesta = [];
 		var usuario = req.params.mail;
-		//pg.connect(url_database, function(err, client) {
 		client
 			.query("SELECT email, partidasGanadas FROM usuarios ORDER BY partidasGanadas DESC")
 			.on('row', function(row){
@@ -330,7 +322,6 @@ io.on('connection', function(socket){
 			.on('end', function(){
 				res.send(respuesta);
 			});
-		//});
 	});
 
 	router.get('/postUser/:id/:nombre/:email/:password', function(req, res){
@@ -338,33 +329,27 @@ io.on('connection', function(socket){
 		var nombre = req.params.nombre;
 		var email = req.params.email;
 		var password = req.params.password;
-		//pg.connect(url_database, function(err, client) {
 			client
 				.query("INSERT INTO usuarios VALUES (($1),($2),($3),($4), 0, 0, 0)", [id, nombre, email, password])
 				.on('end', function(){
 					res.send(true);
 				});
-		//});
 	});
 
 	router.get('/addUser', function(req,res){
-		//pg.connect(url_database, function(err, client) {
 			client
 				.query("INSERT INTO usuarios VALUES(1, 'Kevin', 'prueba@gmail.com', 'patata123', 3, 2, 0)")
 				.on('end', function(){
 				});
 			res.send("USUARIO INSERTADO");
-		//});
 	});
 
 	router.get('/delTable', function(req,res){
-		//pg.connect(url_database, function(err, client) {
 			client
 				.query('DROP TABLE usuarios')
 				.on('end', function(){
 				});
 			res.send("TABLA USUARIOS ELIMINADA");
-		//});
 	});
 
 	router.get('/', function(req,res){

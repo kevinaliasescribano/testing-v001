@@ -72,9 +72,10 @@ $('.options').on('click', function(){
 			});
 		}
 		
-	}
-	if($(this).attr('id') === "opcion2"){
+	} else if($(this).attr('id') === "opcion2"){
 		window.location.replace("/game");
+	} else if($(this).attr('id') === "opcion3"){
+		$('#profile').slideDown(300);
 	}
 });
 

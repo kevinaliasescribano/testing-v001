@@ -552,6 +552,8 @@
 		socket.on('newPlayers', function(jugador1, jugador2){
 			playerA = new Player(jugador1[0], jugador1[1], jugador1[2], 0);
 			playerB = new Player(jugador2[0], jugador2[1], jugador2[2], 0);
+			$('#nombreA').text(playerA.getUsername());
+			$('#nombreB').text(playerB.getUsername());
 			turnoPlayer = playerA;
 			$('#userA').text(playerA.getUsername());
 			$('#puntosA').text(playerA.getPuntos());
@@ -613,6 +615,8 @@
 			$('#darkness').fadeIn(200);
 			$('#lightbox').fadeIn(200);
 			$('#lightbox').addClass('finish');
+			$('#nombreResultA').text(playerA.getUsername());
+			$('#nombreResultB').text(playerB.getUsername());
 			$('#results').show(300);
 			$('#marcadorA').css('background-color', playerA.getColor());
 			$('#marcadorB').css('background-color', playerB.getColor());
