@@ -80,7 +80,7 @@ $('.options').on('click', function(){
 });
 
 $('#makeRegis').on('click', function(){
-	var id = $('.regisForm input[name="id"]').val();
+	//var id = $('.regisForm input[name="id"]').val();
 	var nombre = $('.regisForm input[name="nombre"]').val();
 	var email = $('.regisForm input[name="email"]').val();
 	var password = $('.regisForm input[name="password"]').val();
@@ -90,8 +90,8 @@ $('#makeRegis').on('click', function(){
 	.done(function(data){
 		if(data[0] === undefined){
 			$.ajax({
-				url: "/postUser/"+id+"/"+nombre+"/"+email+"/"+password,
-				data: {id: id, nombre: nombre, email: email, password: password}
+				url: "/postUser/"+nombre+"/"+email+"/"+password,
+				data: {nombre: nombre, email: email, password: password}
 			})
 			.done(function(data){
 				if(data === true){
@@ -136,6 +136,39 @@ $('#salir').on('click', function(){
 $('.return').on('click', function(){
 	$(this).parent().parent().slideUp(300);
 	$('#mainDiv').slideDown(300);
+});
+
+$('#historial').on('click', function(){
+	$.ajax({
+		url: "/getPartidasPersonales"
+	})
+	.done(function(data){
+		$.ajax({
+			url: "/getThisUsername"
+		})
+		.done(function(data2){
+			for(i in data){
+				$('.historialMostrado table').append("<tr><td>"+data[i].id+"</td><td>"+data[i].jugadora+"</td><td>"+data[i].jugadorb+"</td><td>"+data[i].puntuaciona+"</td><td>"+data[i].puntuacionb+"</td></tr>");
+				if(data[i].jugadora === data2){
+					if(data[i].puntuaciona > data[i].puntuacionb){
+						$('.historialMostrado table tr').last().addClass('win');
+					} else if(data[i].puntuaciona < data[i].puntuacionb){
+						$('.historialMostrado table tr').last().addClass('lose');
+					} else {
+						$('.historialMostrado table tr').last().addClass('eq');
+					}
+				} else if(data[i].jugadorb === data2){
+					if(data[i].puntuaciona < data[i].puntuacionb){
+						$('.historialMostrado table tr').last().addClass('win');
+					} else if(data[i].puntuaciona > data[i].puntuacionb){
+						$('.historialMostrado table tr').last().addClass('lose');
+					} else {
+						$('.historialMostrado table tr').last().addClass('eq');
+					}
+				}
+			}
+		});
+	})
 });
 
 $(document).on({

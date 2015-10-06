@@ -287,9 +287,62 @@
 	width:80%;
 	margin-left:auto;
 	margin-right:auto;
+	text-align:center;
 }
 
-/**************************************/
+#mainDiv #menuPrincipal{
+	margin-top:15%;
+	display:inline-block;
+	width:100%;
+}
+
+#mainDiv #menuPrincipal .options{
+	width:29%;
+	float:left;
+	border:solid 1px black;
+	margin:0 2%;
+}
+
+#mainDiv #botonSalir{
+	width:10%;
+	margin-left:auto;
+	margin-right:auto;
+	margin-top:5%;
+}
+
+#mainDiv #botonSalir i{
+	padding:10px;
+	border-radius:20px;
+	background-color:red;
+}
+
+#mainDiv #botonSalir i:hover{
+	color:white;
+	cursor:pointer;
+}
+
+/**************************************************************************/
+/************************** ESTILOS PARA STATS ****************************/
+
+#stats {
+	width:80%;
+	margin-left:auto;
+	margin-right:auto;
+	text-align:center;
+	display:none;
+	margin-top:5%;
+}
+
+#stats .titulo{
+	height:15%;
+	border:black solid 1px;
+}
+
+#stats table{
+	width:100%;
+	text-align:center;
+}
+
 #stats table tr:nth-child(odd){
 	background: #DDD;
 }
@@ -297,6 +350,97 @@
 #stats table tr th{
 	background: #FCA;
 }
+
+#stats .divReturn{
+	width:10%;
+	margin-left:auto;
+	margin-right:auto;
+	margin-top:3%;
+}
+
+#stats .divReturn i{
+	padding:10px;
+	width:100%;
+	background-color:cornflowerblue;
+}
+
+#stats .divReturn i:hover{
+	color:white;
+	cursor:pointer;
+}
+
+/**************************************************************************/
+/************************** ESTILOS PARA PROFILE ****************************/
+
+#profile{
+	width:80%;
+	margin-left:auto;
+	margin-right:auto;
+	display:none;
+	margin-top:5%;
+	border:solid 1px black;
+}
+
+#profile .divImgProfile{
+	width:25%;
+	display:inline-block;
+	text-align:center;
+}
+
+#profile .divImgProfile img{
+	width:200px;
+	height:200px;
+	border-radius:100px;
+	box-shadow:0 0 8px rgba(0,0,0,.8);
+	margin:20px;
+}
+
+#profile .divInfo{
+	width:70%;
+	display:inline-block;
+	float:right;
+	border:1px solid red;
+}
+
+#profile .divOptions{
+	text-align:center;
+	border-top:1px solid green;
+	border-bottom:1px solid green;
+}
+
+#profile .divReturn{
+	width:10%;
+	margin-left:auto;
+	margin-right:auto;
+	margin-top:3%;
+	text-align:center;
+}
+
+#profile .divReturn i{
+	padding:10px;
+	width:100%;
+	background-color:cornflowerblue;
+}
+
+#profile .divReturn i:hover{
+	color:white;
+	cursor:pointer;
+}
+
+#profile .historialMostrado table .win{
+	background-color: green;
+}
+
+#profile .historialMostrado table .lose{
+	background-color: red;
+}
+
+#profile .historialMostrado table .eq{
+	background-color: yellow;
+}
+
+/**************************************************************************/
+/************************** ESTILOS PARA MODAL LOADING ****************************/
 
 .modal {
     display:    none;

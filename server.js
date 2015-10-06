@@ -84,175 +84,184 @@ app.use(session({secret: 'secretito'}));
 
 pg.connect(url_database, function(err, client) {
 
-io.on('connection', function(socket){
+	io.on('connection', function(socket){
 
-	var roomSelected;
-	
-	//if(ips.indexOf(socket.handshake.address) == -1){
-		//ips.push(socket.handshake.address);
-	for(var i in rooms){
-		if(rooms[i].numPlayers < 2){
-			console.log("Enta en la "+i);
-			socket.join(rooms[0]);
-			roomSelected = rooms[i];
-			roomSelected.numPlayers++;
-			break;
-		}
-	}
-
-	if(roomSelected === undefined){
-		console.log("NUESTRAS SALAS ESTAN LLENAS");
-	}
-	//} else {
-	//	console.log("USUARIO YA CONECTADO");
-	//}
-	
-	//var clients = io.sockets.adapter.rooms[rooms[0]];
-	//var numClients = (typeof clients !== 'undefined') ? Object.keys(clients).length : 0;
-	
-	socket.on('disconnect', function(){
-		console.log(roomSelected.users[roomSelected.playerB]);
-		if(roomSelected.playerA === "A" && socket.username === "B"){
-			io.sockets.connected[roomSelected.users[roomSelected.playerA]].emit('infoLeave', roomSelected.namePlayerB);
-		} else if(roomSelected.playerB === "B" && socket.username === "A"){
-			io.sockets.connected[roomSelected.users[roomSelected.playerB]].emit('infoLeave', roomSelected.namePlayerA);
+		var roomSelected;
+		
+		//if(ips.indexOf(socket.handshake.address) == -1){
+			//ips.push(socket.handshake.address);
+		for(var i in rooms){
+			if(rooms[i].numPlayers < 2){
+				console.log("Enta en la "+i);
+				socket.join(rooms[0]);
+				roomSelected = rooms[i];
+				roomSelected.numPlayers++;
+				break;
+			}
 		}
 
-		ips.splice(ips.indexOf(socket.handshake.address), 1);
-
-		roomSelected.playerB = '';
-		roomSelected.namePlayerB = '';
-		roomSelected.colorPlayerB = '';
-		roomSelected.pointsPlayerB = '';
-
-		roomSelected.playerA = '';
-		roomSelected.namePlayerA = '';
-		roomSelected.colorPlayerA = '';
-		roomSelected.pointsPlayerA = '';
-
-		roomSelected.numPlayers = 0;
-		roomSelected.users = {};
-	});
-	
-	socket.on('clickEvent', function(bordes, color, id, pintado){
-		io.sockets.emit('enviarCuadrados', bordes, color, id, pintado);
-	});
-	
-	socket.on('join', function(username, color){
-		if(roomSelected.playerA === ''){
-			roomSelected.playerA = "A";
-			socket.username = "A";
-			roomSelected.namePlayerA = username;
-			roomSelected.colorPlayerA = color;
-			io.sockets.connected[socket.id].emit('loading');
-			roomSelected.users[roomSelected.playerA] = socket.id;
-		} else if(roomSelected.playerB === ''){
-			roomSelected.playerB = "B";
-			socket.username = "B";
-			roomSelected.namePlayerB = username;
-			roomSelected.colorPlayerB = color;
-			roomSelected.users[roomSelected.playerB] = socket.id;
-			io.sockets.connected[roomSelected.users[roomSelected.playerA]].emit('newPlayers', [roomSelected.playerA, roomSelected.namePlayerA, roomSelected.colorPlayerA], [roomSelected.playerB, roomSelected.namePlayerB, roomSelected.colorPlayerB]);
-			io.sockets.connected[roomSelected.users[roomSelected.playerB]].emit('newPlayers', [roomSelected.playerA, roomSelected.namePlayerA, roomSelected.colorPlayerA], [roomSelected.playerB, roomSelected.namePlayerB, roomSelected.colorPlayerB]);
+		if(roomSelected === undefined){
+			console.log("NUESTRAS SALAS ESTAN LLENAS");
 		}
-	});
+		//} else {
+		//	console.log("USUARIO YA CONECTADO");
+		//}
+		
+		//var clients = io.sockets.adapter.rooms[rooms[0]];
+		//var numClients = (typeof clients !== 'undefined') ? Object.keys(clients).length : 0;
+		
+		socket.on('disconnect', function(){
+			console.log(roomSelected.users[roomSelected.playerB]);
+			if(roomSelected.playerA === "A" && socket.username === "B"){
+				io.sockets.connected[roomSelected.users[roomSelected.playerA]].emit('infoLeave', roomSelected.namePlayerB);
+			} else if(roomSelected.playerB === "B" && socket.username === "A"){
+				io.sockets.connected[roomSelected.users[roomSelected.playerB]].emit('infoLeave', roomSelected.namePlayerA);
+			}
 
-	socket.on('cambiarTurno', function(playerWithToken){
-		if(playerWithToken === roomSelected.playerA){
-			roomSelected.turno = roomSelected.playerB;
-		} else if(playerWithToken === roomSelected.playerB){
-			roomSelected.turno = roomSelected.playerA;
-		}
-		io.sockets.emit('turnoCambiado', socket.username);
-	});
+			ips.splice(ips.indexOf(socket.handshake.address), 1);
 
-	socket.on('canIClick', function(){
-		if(socket.username !== undefined){
-			io.sockets.connected[roomSelected.users[socket.username]].emit('userClick', socket.username);
-		}
-	});
+			roomSelected.playerB = '';
+			roomSelected.namePlayerB = '';
+			roomSelected.colorPlayerB = '';
+			roomSelected.pointsPlayerB = '';
 
-	socket.on('makePoints', function(id, puntos){
-		io.sockets.emit('printPoints', id, puntos);
-	});
-	socket.on('comenzarPartida', function(){
-		io.sockets.connected[roomSelected.users[socket.username]].emit('comenzarGame');
-	});
-	socket.on('finalizarPartida', function(puntosA, puntosB){
-		var winPlayer = "";
-		if(puntosA > puntosB){
-			io.sockets.connected[roomSelected.users[roomSelected.playerA]].emit('partidaFinalizada', 'FELICIDADES!');
-			io.sockets.connected[roomSelected.users[roomSelected.playerB]].emit('partidaFinalizada', 'GANA A');
-			winPlayer = roomSelected.playerA;
-		} else if(puntosB > puntosA){
-			io.sockets.connected[roomSelected.users[roomSelected.playerA]].emit('partidaFinalizada', 'GANA B');
-			io.sockets.connected[roomSelected.users[roomSelected.playerB]].emit('partidaFinalizada', 'FELICIDADES!');
-			winPlayer = roomSelected.playerB;
-		} else {
-			io.sockets.connected[roomSelected.users[roomSelected.playerA]].emit('partidaFinalizada', 'EMPATE');
-			io.sockets.connected[roomSelected.users[roomSelected.playerB]].emit('partidaFinalizada', 'EMPATE');
-		}
+			roomSelected.playerA = '';
+			roomSelected.namePlayerA = '';
+			roomSelected.colorPlayerA = '';
+			roomSelected.pointsPlayerA = '';
 
-		if(winPlayer === roomSelected.playerA){
-			client
-				.query('UPDATE usuarios SET partidasGanadas = partidasGanadas + 1 WHERE nombre = ($1)', [roomSelected.namePlayerA])
-				.on('end', function(){
-				});
-			client
-				.query('UPDATE usuarios SET partidasJugadas = partidasJugadas + 1 WHERE nombre = ($1)', [roomSelected.namePlayerA])
-				.on('end', function(){
-				});
-			client
-				.query('UPDATE usuarios SET partidasJugadas = partidasJugadas + 1 WHERE nombre = ($1)', [roomSelected.namePlayerB])
-				.on('end', function(){
-				});
-		} else if(winPlayer === roomSelected.playerB){
-			client
-				.query('UPDATE usuarios SET partidasGanadas = partidasGanadas + 1 WHERE nombre = ($1)', [roomSelected.namePlayerB])
-				.on('end', function(){
-				});
-			client
-				.query('UPDATE usuarios SET partidasJugadas = partidasJugadas + 1 WHERE nombre = ($1)', [roomSelected.namePlayerA])
-				.on('end', function(){
-				});
-			client
-				.query('UPDATE usuarios SET partidasJugadas = partidasJugadas + 1 WHERE nombre = ($1)', [roomSelected.namePlayerB])
-				.on('end', function(){
-				});
-		} else if(winPlayer === ""){
-			client
-				.query('UPDATE usuarios SET partidasJugadas = partidasJugadas + 1 WHERE nombre = ($1)', [roomSelected.namePlayerA])
-				.on('end', function(){
-				});
-			client
-				.query('UPDATE usuarios SET partidasJugadas = partidasJugadas + 1 WHERE nombre = ($1)', [roomSelected.namePlayerB])
-				.on('end', function(){
-				});
-		}
-
-		roomSelected.playerB = '';
-		roomSelected.namePlayerB = '';
-		roomSelected.colorPlayerB = '';
-		roomSelected.pointsPlayerB = '';
-
-		roomSelected.playerA = '';
-		roomSelected.namePlayerA = '';
-		roomSelected.colorPlayerA = '';
-		roomSelected.pointsPlayerA = '';
-
-		roomSelected.numPlayers = 0;
-		roomSelected.users = {};
-	});
-	socket.on('paintSquare', function(color, id){
-		io.sockets.emit('squarePainted', color, id);
-	});
-});
-	console.log('Connected to postgres! Creating tables...');
-	console.log("Creating \"usuarios\"");
-	client
-		.query('CREATE TABLE IF NOT EXISTS usuarios(id int, nombre varchar(30),email varchar(50),password varchar(30),partidasJugadas int,partidasGanadas int,abandonos int)')
-		.on('end', function(){
+			roomSelected.numPlayers = 0;
+			roomSelected.users = {};
 		});
+		
+		socket.on('clickEvent', function(bordes, color, id, pintado){
+			io.sockets.emit('enviarCuadrados', bordes, color, id, pintado);
+		});
+		
+		socket.on('join', function(username, color){
+			if(roomSelected.playerA === ''){
+				roomSelected.playerA = "A";
+				socket.username = "A";
+				roomSelected.namePlayerA = username;
+				roomSelected.colorPlayerA = color;
+				io.sockets.connected[socket.id].emit('loading');
+				roomSelected.users[roomSelected.playerA] = socket.id;
+			} else if(roomSelected.playerB === ''){
+				roomSelected.playerB = "B";
+				socket.username = "B";
+				roomSelected.namePlayerB = username;
+				roomSelected.colorPlayerB = color;
+				roomSelected.users[roomSelected.playerB] = socket.id;
+				io.sockets.connected[roomSelected.users[roomSelected.playerA]].emit('newPlayers', [roomSelected.playerA, roomSelected.namePlayerA, roomSelected.colorPlayerA], [roomSelected.playerB, roomSelected.namePlayerB, roomSelected.colorPlayerB]);
+				io.sockets.connected[roomSelected.users[roomSelected.playerB]].emit('newPlayers', [roomSelected.playerA, roomSelected.namePlayerA, roomSelected.colorPlayerA], [roomSelected.playerB, roomSelected.namePlayerB, roomSelected.colorPlayerB]);
+			}
+		});
+
+		socket.on('cambiarTurno', function(playerWithToken){
+			if(playerWithToken === roomSelected.playerA){
+				roomSelected.turno = roomSelected.playerB;
+			} else if(playerWithToken === roomSelected.playerB){
+				roomSelected.turno = roomSelected.playerA;
+			}
+			io.sockets.emit('turnoCambiado', socket.username);
+		});
+
+		socket.on('canIClick', function(){
+			if(socket.username !== undefined){
+				io.sockets.connected[roomSelected.users[socket.username]].emit('userClick', socket.username);
+			}
+		});
+
+		socket.on('makePoints', function(id, puntos){
+			io.sockets.emit('printPoints', id, puntos);
+		});
+		socket.on('comenzarPartida', function(){
+			io.sockets.connected[roomSelected.users[socket.username]].emit('comenzarGame');
+		});
+		socket.on('finalizarPartida', function(puntosA, puntosB){
+			var winPlayer = "";
+			if(puntosA > puntosB){
+				io.sockets.connected[roomSelected.users[roomSelected.playerA]].emit('partidaFinalizada', 'FELICIDADES!');
+				io.sockets.connected[roomSelected.users[roomSelected.playerB]].emit('partidaFinalizada', 'GANA A');
+				winPlayer = roomSelected.playerA;
+			} else if(puntosB > puntosA){
+				io.sockets.connected[roomSelected.users[roomSelected.playerA]].emit('partidaFinalizada', 'GANA B');
+				io.sockets.connected[roomSelected.users[roomSelected.playerB]].emit('partidaFinalizada', 'FELICIDADES!');
+				winPlayer = roomSelected.playerB;
+			} else {
+				io.sockets.connected[roomSelected.users[roomSelected.playerA]].emit('partidaFinalizada', 'EMPATE');
+				io.sockets.connected[roomSelected.users[roomSelected.playerB]].emit('partidaFinalizada', 'EMPATE');
+			}
+
+			if(winPlayer === roomSelected.playerA){
+				client
+					.query('UPDATE usuarios SET partidasGanadas = partidasGanadas + 1 WHERE nombre = ($1)', [roomSelected.namePlayerA]);
+				client
+					.query('UPDATE usuarios SET partidasJugadas = partidasJugadas + 1 WHERE nombre = ($1)', [roomSelected.namePlayerA]);
+				client
+					.query('UPDATE usuarios SET partidasJugadas = partidasJugadas + 1 WHERE nombre = ($1)', [roomSelected.namePlayerB]);
+			} else if(winPlayer === roomSelected.playerB){
+				client
+					.query('UPDATE usuarios SET partidasGanadas = partidasGanadas + 1 WHERE nombre = ($1)', [roomSelected.namePlayerB]);
+				client
+					.query('UPDATE usuarios SET partidasJugadas = partidasJugadas + 1 WHERE nombre = ($1)', [roomSelected.namePlayerA]);
+				client
+					.query('UPDATE usuarios SET partidasJugadas = partidasJugadas + 1 WHERE nombre = ($1)', [roomSelected.namePlayerB]);
+			} else if(winPlayer === ""){
+				client
+					.query('UPDATE usuarios SET partidasJugadas = partidasJugadas + 1 WHERE nombre = ($1)', [roomSelected.namePlayerA]);
+				client
+					.query('UPDATE usuarios SET partidasJugadas = partidasJugadas + 1 WHERE nombre = ($1)', [roomSelected.namePlayerB]);
+			}
+
+			console.log(roomSelected.namePlayerA + " - " + typeof roomSelected.namePlayerA);
+			console.log(roomSelected.namePlayerB + " - " + typeof roomSelected.namePlayerB);
+			console.log(puntosA + " - " + typeof puntosA);
+			console.log(puntosB + " - " + typeof puntosB);
+			client
+				.query('INSERT INTO partidas (jugadorA, jugadorB, abandono, puntuacionA, puntuacionB) VALUES (($1), ($2), FALSE, ($3), ($4))', [roomSelected.namePlayerA, roomSelected.namePlayerB, puntosA, puntosB]);
+
+			roomSelected.playerB = '';
+			roomSelected.namePlayerB = '';
+			roomSelected.colorPlayerB = '';
+			roomSelected.pointsPlayerB = '';
+
+			roomSelected.playerA = '';
+			roomSelected.namePlayerA = '';
+			roomSelected.colorPlayerA = '';
+			roomSelected.pointsPlayerA = '';
+
+			roomSelected.numPlayers = 0;
+			roomSelected.users = {};
+		});
+		socket.on('paintSquare', function(color, id){
+			io.sockets.emit('squarePainted', color, id);
+		});
+	});
+	
+	router.get('/resetTables', function(req,res){
+		console.log("Restarting tables...");
+		client
+			.query('DROP TABLE usuarios')
+			.on('end', function(){
+				console.log("CREATING USUARIOS");
+				client
+					.query('CREATE TABLE IF NOT EXISTS usuarios(id SERIAL PRIMARY KEY, nombre varchar(30),email varchar(50),password varchar(30),partidasJugadas int,partidasGanadas int,abandonos int)')
+					.on('end',function(){
+						console.log("USUARIOS CREATED");
+					});
+			});
+		client
+			.query('DROP TABLE partidas')
+			.on('end', function(){
+				console.log("CREATING PARTIDAS");
+				client
+					.query('CREATE TABLE IF NOT EXISTS partidas(id SERIAL PRIMARY KEY, jugadorA varchar(30), jugadorB varchar(30), abandono boolean, puntuacionA int, puntuacionB int)')
+					.on('end',function(){
+						console.log("PARTIDAS CREATED");
+					});
+			});
+	});
 
 	router.get('/getUsers', function(req,res){
 		if(req.session.email === "asd"){
@@ -268,6 +277,31 @@ io.on('connection', function(socket){
 		} else {
 			res.status(404).send("Cannot GET "+req.url);
 		}
+	});
+
+	router.get('/getPartidas', function(req,res){
+		var respuesta = [];
+		client
+			.query('SELECT * FROM partidas')
+			.on('row', function(row){
+				respuesta.push(row);
+			})
+			.on('end', function(){
+				res.send(respuesta);
+			});	
+	});
+
+	router.get('/getPartidasPersonales', function(req,res){
+		var nombre = req.session.nombre;
+		var respuesta = [];
+		client
+			.query('SELECT * FROM partidas WHERE jugadorA=($1) OR jugadorB=($1)', [nombre])
+			.on('row',function(row){
+				respuesta.push(row);
+			})
+			.on('end',function(){
+				res.send(respuesta);
+			});
 	});
 
 	router.get('/getUserByMail/:mail', function(req,res){
@@ -324,32 +358,15 @@ io.on('connection', function(socket){
 			});
 	});
 
-	router.get('/postUser/:id/:nombre/:email/:password', function(req, res){
-		var id = req.params.id;
+	router.get('/postUser/:nombre/:email/:password', function(req, res){
 		var nombre = req.params.nombre;
 		var email = req.params.email;
 		var password = req.params.password;
 			client
-				.query("INSERT INTO usuarios VALUES (($1),($2),($3),($4), 0, 0, 0)", [id, nombre, email, password])
+				.query("INSERT INTO usuarios (nombre,email,password, partidasJugadas, partidasGanadas, abandonos) VALUES (($1),($2),($3), 0, 0, 0)", [nombre, email, password])
 				.on('end', function(){
 					res.send(true);
 				});
-	});
-
-	router.get('/addUser', function(req,res){
-			client
-				.query("INSERT INTO usuarios VALUES(1, 'Kevin', 'prueba@gmail.com', 'patata123', 3, 2, 0)")
-				.on('end', function(){
-				});
-			res.send("USUARIO INSERTADO");
-	});
-
-	router.get('/delTable', function(req,res){
-			client
-				.query('DROP TABLE usuarios')
-				.on('end', function(){
-				});
-			res.send("TABLA USUARIOS ELIMINADA");
 	});
 
 	router.get('/', function(req,res){

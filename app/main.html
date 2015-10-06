@@ -2,34 +2,35 @@
 	<head>
 		<meta charset="utf-8">﻿
 		<link rel="stylesheet" type="text/css" href="app/styles.css">
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
 	</head>
 	<body>
-		<div id="mainDiv" style="width:80%;margin-left:auto;margin-right:auto;text-align:center;">
-			<div id="menuPrincipal" style="margin-top:15%;display:inline-block;width:100%;">
-				<div id="opcion1" class="options" style="width:29%;float:left;border:solid 1px black;margin:0 2%;">
+		<div id="mainDiv">
+			<div id="menuPrincipal">
+				<div id="opcion1" class="options">
 					<img alt="opt1" />
 					<p>Menu 1</p>
 				</div>
-				<div id="opcion2" class="options" style="width:29%;float:left;border:solid 1px black;margin:0 2%;">
+				<div id="opcion2" class="options">
 					<img alt="opt2" />
 					<p>Menu 2</p>
 				</div>
-				<div id="opcion3" class="options" style="width:29%;float:left;border:solid 1px black;margin:0 2%;">
+				<div id="opcion3" class="options">
 					<img alt="opt3" />
 					<p>Menu 3</p>
 				</div>
 			</div>
-			<div id="botonSalir" style="width:10%;margin-left:auto;margin-right:auto;margin-top:5%;">
-				<img alt="SALIR" id="salir"/>
+			<div id="botonSalir">
+				<i id="salir" class="fa fa-power-off"></i>
 			</div>
 		</div>
-		<div id="stats" style="width:80%;margin-left:auto;margin-right:auto;text-align:center;display:none;margin-top:5%;">
+		<div id="stats">
 			<div style="border:black solid 1px;">
-				<div style="height:15%;border:black solid 1px;">
+				<div class="titulo">
 					<p>TITULO PRUEBA</p>
 				</div>
 				<div>
-					<table style="width:100%;text-align:center;">
+					<table>
 						<tr>
 							<th>
 								<span>Posicion</span>
@@ -50,24 +51,35 @@
 					</table>
 				</div>
 			</div>
-			<div style="width:10%;margin-left:auto;margin-right:auto;margin-top:5%;">
-				<img alt="RETURN" class="return"/>
+			<div class="divReturn">
+				<i class="fa fa-arrow-left return"></i>
 			</div>
 		</div>
-		<div id="profile" style="width:80%;margin-left:auto;margin-right:auto;display:none;margin-top:5%;border:solid 1px black;">
-			<div style="width:25%;display:inline-block;text-align:center;">
-				<img alt="imgPerfil" style="width:200px;height:200px;border-radius:100px;box-shadow:0 0 8px rgba(0,0,0,.8);margin:20px;" src="http://www.fromearthtotheuniverse.org/webimages/Desktops/andromeda_1024x768.jpg" />
+		<div id="profile">
+			<div class="divImgProfile">
+				<img alt="imgPerfil" src="http://www.fromearthtotheuniverse.org/webimages/Desktops/andromeda_1024x768.jpg" />
 			</div>
-			<div style="width:70%;display:inline-block;float:right;border:1px solid red;">
+			<div class="divInfo">
 				Div con info
 			</div>
-			<div style="text-align:center;border:1px solid green;">
-				<button style="margin:10px 5%;width:15%;">OptA</button>
-				<button style="margin:10px 5%;width:15%;">OptB</button>
-				<button style="margin:10px 5%;width:15%;">OptC</button>
+			<div class="divOptions">
+				<button style="margin:10px 5%;width:15%;">Información</button>
+				<button style="margin:10px 5%;width:15%;">Amigos</button>
+				<button id="historial" style="margin:10px 5%;width:15%;">Historial</button>
 			</div>
-			<div style="width:10%;margin-left:auto;margin-right:auto;margin-top:5%;">
-				<img alt="RETURN" class="return"/>
+			<div class="historialMostrado">
+				<table style="width:100%;text-align:center;">
+					<tr>
+						<th>ID</th>
+						<th>JugadorA</th>
+						<th>JugadorB</th>
+						<th>PuntuacionA</th>
+						<th>PuntuacionB</th>
+					</tr>
+				</table>
+			</div>
+			<div class="divReturn">
+				<i class="fa fa-arrow-left return"></i>
 			</div>
 		</div>
 		<div class="modal"></div>
