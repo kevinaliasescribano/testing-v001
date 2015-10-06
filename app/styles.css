@@ -396,9 +396,10 @@
 }
 
 #profile .divInfo{
-	width:70%;
-	display:inline-block;
-	float:right;
+	display:none;
+	width:80%;
+	margin-right:auto;
+	margin-left:auto;
 	border:1px solid red;
 }
 
@@ -427,12 +428,20 @@
 	cursor:pointer;
 }
 
+#profile .historialMostrado{
+	display:none;
+}
+
+#profile .historialMostrado table tr{
+	height:40px;
+}
+
 #profile .historialMostrado table .win{
-	background-color: green;
+	background-color: lime;
 }
 
 #profile .historialMostrado table .lose{
-	background-color: red;
+	background-color: crimson;
 }
 
 #profile .historialMostrado table .eq{

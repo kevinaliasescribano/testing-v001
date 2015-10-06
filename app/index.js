@@ -138,37 +138,44 @@ $('.return').on('click', function(){
 	$('#mainDiv').slideDown(300);
 });
 
+$('#mostrarInformacion').on('click',function(){
+	$('.divInfo').slideDown(300);
+});
+
 $('#historial').on('click', function(){
-	$.ajax({
-		url: "/getPartidasPersonales"
-	})
-	.done(function(data){
+	if($('.historialMostrado table tr').length <= 1){
 		$.ajax({
-			url: "/getThisUsername"
+			url: "/getPartidasPersonales"
 		})
-		.done(function(data2){
-			for(i in data){
-				$('.historialMostrado table').append("<tr><td>"+data[i].id+"</td><td>"+data[i].jugadora+"</td><td>"+data[i].jugadorb+"</td><td>"+data[i].puntuaciona+"</td><td>"+data[i].puntuacionb+"</td></tr>");
-				if(data[i].jugadora === data2){
-					if(data[i].puntuaciona > data[i].puntuacionb){
-						$('.historialMostrado table tr').last().addClass('win');
-					} else if(data[i].puntuaciona < data[i].puntuacionb){
-						$('.historialMostrado table tr').last().addClass('lose');
-					} else {
-						$('.historialMostrado table tr').last().addClass('eq');
-					}
-				} else if(data[i].jugadorb === data2){
-					if(data[i].puntuaciona < data[i].puntuacionb){
-						$('.historialMostrado table tr').last().addClass('win');
-					} else if(data[i].puntuaciona > data[i].puntuacionb){
-						$('.historialMostrado table tr').last().addClass('lose');
-					} else {
-						$('.historialMostrado table tr').last().addClass('eq');
+		.done(function(data){
+			$.ajax({
+				url: "/getThisUsername"
+			})
+			.done(function(data2){
+				$('.historialMostrado').slideDown('300');
+				for(i in data){
+					$('.historialMostrado table').append("<tr><td>"+data[i].id+"</td><td>"+data[i].jugadora+"</td><td>"+data[i].jugadorb+"</td><td>"+data[i].puntuaciona+"</td><td>"+data[i].puntuacionb+"</td></tr>");
+					if(data[i].jugadora === data2){
+						if(data[i].puntuaciona > data[i].puntuacionb){
+							$('.historialMostrado table tr').last().addClass('win');
+						} else if(data[i].puntuaciona < data[i].puntuacionb){
+							$('.historialMostrado table tr').last().addClass('lose');
+						} else {
+							$('.historialMostrado table tr').last().addClass('eq');
+						}
+					} else if(data[i].jugadorb === data2){
+						if(data[i].puntuaciona < data[i].puntuacionb){
+							$('.historialMostrado table tr').last().addClass('win');
+						} else if(data[i].puntuaciona > data[i].puntuacionb){
+							$('.historialMostrado table tr').last().addClass('lose');
+						} else {
+							$('.historialMostrado table tr').last().addClass('eq');
+						}
 					}
 				}
-			}
+			});
 		});
-	})
+	}
 });
 
 $(document).on({

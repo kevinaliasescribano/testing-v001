@@ -5,14 +5,12 @@ var express = require('express');
 var session = require('express-session');
 var app = express();
 var serverCreated = app.listen(serverPort);
-var fs = require('fs');
 var io = require('socket.io').listen(serverCreated);
 var pg = require('pg');	
 var router = express.Router();
 var nodemailer = require('nodemailer');
 var transporter = nodemailer.createTransport();
 var url_database = 'postgres://vqirkyzfmaagxq:TDNwprpRbTWJosQdqP-1YdjjU8@ec2-54-217-240-205.eu-west-1.compute.amazonaws.com:5432/ddmftfl54cvb0t?ssl=true';
-var nSight = 0;
 var rooms = {
 	roomA: {
 		playerA: '',
