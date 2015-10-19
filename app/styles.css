@@ -1,13 +1,16 @@
+body{
+	background-color: #CFFFDD;
+}
+
 /**********************************************************************/
 /*********************** ESTILOS PARA LIGHTBOX ************************/
 
 #lightbox {
-	display: auto;
+	display: none;
 	position: absolute;
 	top: 25%;
 	left: 25%;
 	width: 50%;
-	height: 50%;
 	padding: 5px;
 	border: 5px solid mediumturquoise;
 	background-color: white;
@@ -87,7 +90,7 @@
 /********************* ESTILOS PARA DARKNESS *****************************/
 
 #darkness {
-	display: auto;
+	display: none;
 	position: absolute;
 	top: 0%;
 	left: 0%;
@@ -251,14 +254,10 @@
 }
 
 .regisForm table{
-	width:40%;
+	width:70%;
 	margin-left:auto;
 	margin-right:auto;
 	text-align:center;
-}
-
-.regisForm table tr td{
-	width:50%;
 }
 
 .regisForm table tr td input.denegate{
@@ -297,6 +296,7 @@
 }
 
 #mainDiv #menuPrincipal .options{
+	background-color: white;
 	width:29%;
 	float:left;
 	border:solid 1px black;
@@ -341,6 +341,7 @@
 #stats table{
 	width:100%;
 	text-align:center;
+	background-color: whitE;
 }
 
 #stats table tr:nth-child(odd){
@@ -378,11 +379,10 @@
 	margin-right:auto;
 	display:none;
 	margin-top:5%;
-	border:solid 1px black;
 }
 
 #profile .divImgProfile{
-	width:25%;
+	width:100%;
 	display:inline-block;
 	text-align:center;
 }
@@ -397,6 +397,7 @@
 
 #profile .divInfo{
 	display:none;
+	background-color: white;
 	width:80%;
 	margin-right:auto;
 	margin-left:auto;
@@ -471,4 +472,34 @@ body.loading {
 
 body.loading .modal {
     display: block;
+}
+
+.fa.iconoForm{
+	padding:10px;
+	border-radius: 25px;
+}
+
+.fa.iconoNeutro{
+	background-color: gray;
+}
+
+.fa.iconoError{
+	background-color: red;
+}
+
+.fa.iconoValid{
+	background-color: green;
+}
+
+#loginError{
+	background-color:red;
+	display:none;
+	border-radius:15px;
+}
+
+#divInfo{
+	width:70%;
+	margin-left:auto;
+	margin-right:auto;
+	text-align:center;
 }

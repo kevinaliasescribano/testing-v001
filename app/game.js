@@ -1,4 +1,4 @@
-(function(){
+
 	
 	var canvas = $('#canvas')[0];
 	var ctx = canvas.getContext('2d');
@@ -10,6 +10,7 @@
 	var posXact = 0;
 	var posYact = 0;
 	var squareSize = 148;
+	//var squareSize = 18;
 	var paintStop = true;
 	var cuadrados = [];
 	var bordesPintados = [];
@@ -501,9 +502,30 @@
 				}
 			}
 		
+			for(i in cuadrados){
+				if(cuadrados[i].getColored() === false){
+					if(cuadrados[i].getBordesPintados()['top'][0] === true && cuadrados[i].getBordesPintados()['right'][0] === true && cuadrados[i].getBordesPintados()['bottom'][0] === true && cuadrados[i].getBordesPintados()['left'][0] === true){
+						var puntosActuales = turnoPlayer.getPuntos();
+						puntosActuales++;
+						turnoPlayer.setPuntos(puntosActuales);
+						socket.emit('makePoints', turnoPlayer.getId(), puntosActuales);
+						socket.emit('paintSquare', turnoPlayer.getColor(), i);
+						cuadrados[i].setColor(turnoPlayer.getColor());
+						cuadrados[i].setColor(turnoPlayer.getColor());
+						console.log(turnoPlayer);
+						cuadrados[i].changeColored();
+						ctx.fillStyle = cuadrados[i].getColor();
+						ctx.fillRect(cuadrados[i].values()[0],cuadrados[i].values()[1],cuadrados[i].values()[2],cuadrados[i].values()[2]);
+						changeTurn = false;
+					}
+				}
+			}
+
 			if(changeTurn){
 				socket.emit('cambiarTurno', turnoPlayer.getId());
 			}
+
+
 		}
 		
 		paintStop = false;
@@ -653,7 +675,7 @@
 		clickRaton(evt, ctx);
 	});
 	
-}());
+
 
 (function(){
 	document.getElementById('canvas').oncontextmenu = function(){

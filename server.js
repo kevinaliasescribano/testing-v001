@@ -295,7 +295,7 @@ pg.connect(url_database, function(err, client) {
 		var nombre = req.session.nombre;
 		var respuesta = [];
 		client
-			.query('SELECT * FROM partidas WHERE jugadorA=($1) OR jugadorB=($1)', [nombre])
+			.query('SELECT * FROM partidas WHERE jugadorA=($1) OR jugadorB=($1) LIMIT 10', [nombre])
 			.on('row',function(row){
 				respuesta.push(row);
 			})
@@ -309,6 +309,19 @@ pg.connect(url_database, function(err, client) {
 		var mailFiltered = req.params.mail;
 		client
 			.query("SELECT * FROM usuarios WHERE email=($1)", [mailFiltered])
+			.on('row', function(row){
+				respuesta.push(row);
+			})
+			.on('end', function(){
+				res.send(respuesta);
+			});
+	});
+
+	router.get('/checkIfUserExists/:mail', function(req,res){
+		var respuesta = [];
+		var mailFiltered = req.params.mail;
+		client
+			.query("SELECT email FROM usuarios WHERE email=($1)", [mailFiltered])
 			.on('row', function(row){
 				respuesta.push(row);
 			})

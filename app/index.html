@@ -5,25 +5,29 @@
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
 	</head>
 	<body>
-		<div id="mainDiv">
-			<img alt="PORTADA" src="http://coleccion.educ.ar/coleccion/CD22/img/msc/haciendo-bandera2_IMG.jpg"></img>
-			<img alt="PORTADA" src="http://coleccion.educ.ar/coleccion/CD22/img/msc/haciendo-bandera2_IMG.jpg"></img>
+		<div id="lightbox">
 			<div class="loginForm">
 				<table>
 					<tr>
 						<td>
-							<span>Mail</span>
+							<span>Mail</span>	
 						</td>
 						<td>
-							<span>Pass</span>
+							<input type="text" name="mail">
 						</td>
 					</tr>
 					<tr>
 						<td>
-							<input type="text" name="mail">
+							<span>Pass</span>
 						</td>
 						<td>
 							<input type="password" name="pass">
+						</td>
+					</tr>
+					<tr>
+						<td id="loginError" colspan="2">
+							<i class="fa fa-times"></i>
+							<span>El usuario o la contraseña introducidos son incorrectos.</span>
 						</td>
 					</tr>
 					<tr>
@@ -43,6 +47,8 @@
 						<td>
 							<input type="text" name="nombre">
 						</td>
+						<td>
+						</td>
 					</tr>
 					<tr>
 						<td>
@@ -51,6 +57,9 @@
 						<td>
 							<input type="text" name="email">
 						</td>
+						<td>
+							<i class="fa fa-minus iconoForm iconoNeutro iconoRegMail"></i>
+						</td>
 					</tr>
 					<tr>
 						<td>
@@ -58,6 +67,9 @@
 						</td>
 						<td>
 							<input type="password" name="password">
+						</td>
+						<td>
+							<i class="fa fa-minus iconoForm iconoNeutro iconoRegPass"></i>
 						</td>
 					</tr>
 					<tr>	
@@ -68,6 +80,12 @@
 					</tr>
 				</table>
 			</div>
+		</div>
+		<div id="darkness">
+		</div>
+		<div id="mainDiv">
+			<img alt="PORTADA" src="http://coleccion.educ.ar/coleccion/CD22/img/msc/haciendo-bandera2_IMG.jpg"></img>
+			<img alt="PORTADA" src="http://coleccion.educ.ar/coleccion/CD22/img/msc/haciendo-bandera2_IMG.jpg"></img>
 			<div class="buttonSpace">
 				<button id="toLogin">LOGIN</button>
 				<button id="toRegis">REGISTRO</button>

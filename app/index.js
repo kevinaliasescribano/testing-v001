@@ -6,7 +6,7 @@ $('#botonPrueba').on('click', function(){
 	})
 	.done(function(data){
 		if(data[0] === undefined){
-			alert("USUARIO O CONTRASEÑA NO VALIDOS");
+			$('#loginError').show();
 		} else {
 			if(data[0].password === pass){
 				$.ajax({
@@ -18,7 +18,7 @@ $('#botonPrueba').on('click', function(){
 					}
 				});
 			} else {
-				alert("USUARIO O CONTRASEÑA NO VALIDOS");
+				$('#loginError').show();
 			}
 		}
 	});
@@ -99,27 +99,31 @@ $('#makeRegis').on('click', function(){
 					window.location.reload();
 				}
 			});
-		} else {
-			$('.regisForm input[name="email"]').addClass('denegate');
 		}
 	});
 	
 });
 
 $('#toLogin').on('click', function(){
-	$('.buttonSpace').slideUp(300);
-	$('.loginForm').slideDown(300);
+	$('.loginForm').show();
+	$('.buttonSpace').hide();
+	$('#lightbox').fadeIn(200);
+	$('#darkness').fadeIn(200);
 });
 
 $('#toRegis').on('click', function(){
-	$('.buttonSpace').slideUp(300);
-	$('.regisForm').slideDown(300);
+	$('.regisForm').show();
+	$('.buttonSpace').hide();
+	$('#lightbox').fadeIn(200);
+	$('#darkness').fadeIn(200);
 });
 
 $('.goBack').on('click', function(){
-	$('.regisForm').slideUp(300);
-	$('.loginForm').slideUp(300);
-	$('.buttonSpace').slideDown(300);
+	$('#lightbox').fadeOut(200);
+	$('#darkness').fadeOut(200);
+	$('.buttonSpace').show();
+	$('.regisForm').hide();
+	$('.loginForm').hide();
 });
 
 $('#salir').on('click', function(){
@@ -134,15 +138,23 @@ $('#salir').on('click', function(){
 });
 
 $('.return').on('click', function(){
+	$('.datosPerfil').slideUp(300);
 	$(this).parent().parent().slideUp(300);
 	$('#mainDiv').slideDown(300);
 });
 
 $('#mostrarInformacion').on('click',function(){
+	if(!$('.divInfo').is(':visible')){
+		$('.datosPerfil').slideUp(300);
+	}
 	$('.divInfo').slideDown(300);
 });
 
 $('#historial').on('click', function(){
+	if(!$('.historialMostrado').is(':visible')){
+		$('.datosPerfil').slideUp(300);
+	}
+	$('.historialMostrado').slideDown(300);
 	if($('.historialMostrado table tr').length <= 1){
 		$.ajax({
 			url: "/getPartidasPersonales"
@@ -152,7 +164,6 @@ $('#historial').on('click', function(){
 				url: "/getThisUsername"
 			})
 			.done(function(data2){
-				$('.historialMostrado').slideDown('300');
 				for(i in data){
 					$('.historialMostrado table').append("<tr><td>"+data[i].id+"</td><td>"+data[i].jugadora+"</td><td>"+data[i].jugadorb+"</td><td>"+data[i].puntuaciona+"</td><td>"+data[i].puntuacionb+"</td></tr>");
 					if(data[i].jugadora === data2){
@@ -174,6 +185,37 @@ $('#historial').on('click', function(){
 					}
 				}
 			});
+		});
+	}
+});
+
+$('.regisForm input[name="email"]').on('change', function(){
+	if($(this).val() !== ""){
+		$.ajax({
+			url: "/checkIfUserExists/" + $(this).val()
+		})
+		.done(function(data){
+			if(data[0] !== undefined){
+				if(!$('.iconoRegMail').hasClass('iconoNeutro')){
+					$('.iconoRegMail').removeClass('iconoValid');
+					$('.iconoRegMail').removeClass('fa-check');
+				} else {
+					$('.iconoRegMail').removeClass('iconoNeutro');
+					$('.iconoRegMail').removeClass('fa-minus');
+				}
+				$('.iconoRegMail').addClass('iconoError');
+				$('.iconoRegMail').addClass('fa-times');
+			} else {
+				if(!$('.iconoRegMail').hasClass('iconoNeutro')){
+					$('.iconoRegMail').removeClass('iconoError');
+					$('.iconoRegMail').removeClass('fa-times');
+				} else {
+					$('.iconoRegMail').removeClass('iconoNeutro');
+					$('.iconoRegMail').removeClass('fa-minus');
+				}
+				$('.iconoRegMail').addClass('iconoValid');
+				$('.iconoRegMail').addClass('fa-check');
+			}
 		});
 	}
 });
