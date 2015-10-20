@@ -501,9 +501,10 @@
 					}
 				}
 			}
-		
+			var finish = true;
 			for(i in cuadrados){
 				if(cuadrados[i].getColored() === false){
+					finish = false;
 					if(cuadrados[i].getBordesPintados()['top'][0] === true && cuadrados[i].getBordesPintados()['right'][0] === true && cuadrados[i].getBordesPintados()['bottom'][0] === true && cuadrados[i].getBordesPintados()['left'][0] === true){
 						var puntosActuales = turnoPlayer.getPuntos();
 						puntosActuales++;
@@ -511,14 +512,17 @@
 						socket.emit('makePoints', turnoPlayer.getId(), puntosActuales);
 						socket.emit('paintSquare', turnoPlayer.getColor(), i);
 						cuadrados[i].setColor(turnoPlayer.getColor());
-						cuadrados[i].setColor(turnoPlayer.getColor());
-						console.log(turnoPlayer);
 						cuadrados[i].changeColored();
 						ctx.fillStyle = cuadrados[i].getColor();
 						ctx.fillRect(cuadrados[i].values()[0],cuadrados[i].values()[1],cuadrados[i].values()[2],cuadrados[i].values()[2]);
+						socket.emit('clickEvent', cuadrados[i].getBordesPintados(), cuadrados[i].getColor(), i, cuadrados[i].getColored());
 						changeTurn = false;
+						finish = true;
 					}
 				}
+			}
+			if(finish){
+				socket.emit('finalizarPartida', playerA.getPuntos(), playerB.getPuntos());
 			}
 
 			if(changeTurn){

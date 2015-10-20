@@ -295,7 +295,7 @@ pg.connect(url_database, function(err, client) {
 		var nombre = req.session.nombre;
 		var respuesta = [];
 		client
-			.query('SELECT * FROM partidas WHERE jugadorA=($1) OR jugadorB=($1) LIMIT 10', [nombre])
+			.query('SELECT * FROM partidas WHERE jugadorA=($1) OR jugadorB=($1) ORDER BY id DESC LIMIT 10', [nombre])
 			.on('row',function(row){
 				respuesta.push(row);
 			})
