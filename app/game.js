@@ -307,6 +307,7 @@
 		if(evt.keyCode == 32){
 			for(i in cuadrados){
 				if(x >= cuadrados[i].areaAbarcada()[0] && x <= cuadrados[i].areaAbarcada()[1] && y >= cuadrados[i].areaAbarcada()[2] && y <= cuadrados[i].areaAbarcada()[3]){
+					console.log(cuadrados[i]);
 					iteracionCuadrado(cuadrados[i], ctx);
 				}
 			}
@@ -360,6 +361,8 @@
 					token = positions.indexOf(i) + 1;
 				}
 			}
+
+			borderWithOn[0] = false;
 			
 			while(!cambiado){
 				if(token > 3){
@@ -376,7 +379,7 @@
 				}
 			}
 		}
-		pintarCuadrados(ctx);
+		paintStop = false;
 	}
 	
 	function clickRaton(evt, ctx){
