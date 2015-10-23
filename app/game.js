@@ -387,6 +387,7 @@
 
 			var swapedBorder = false;
 			var changeTurn = true;
+			var painted = false;
 			if(/firefox/.test(navigator.userAgent.toLowerCase())){
 				x = evt.layerX;
 				y = evt.layerY;
@@ -448,28 +449,28 @@
 										if(cuadrados[parseInt(i)-cols] != undefined){
 											cuadrados[parseInt(i)-cols].getBordesPintados()['bottom'][0] = true;
 											cuadrados[parseInt(i)-cols].getBordesPintados()['bottom'][1] = turnoPlayer.getColor();
-
+											painted = true;
 											socket.emit('clickEvent', cuadrados[parseInt(i)-cols].getBordesPintados(), cuadrados[parseInt(i)-cols].getColor(), parseInt(i)-cols, cuadrados[parseInt(i)-cols].getColored());
 										}
 									} else if(j === 'right'){
 										if(cuadrados[parseInt(i)+1] != undefined){
 											cuadrados[parseInt(i)+1].getBordesPintados()['left'][0] = true;
 											cuadrados[parseInt(i)+1].getBordesPintados()['left'][1] = turnoPlayer.getColor();
-
+											painted = true;
 											socket.emit('clickEvent', cuadrados[parseInt(i)+1].getBordesPintados(), cuadrados[parseInt(i)+1].getColor(), parseInt(i)+1, cuadrados[parseInt(i)+1].getColored());
 										}
 									} else if(j === 'bottom'){
 										if(cuadrados[parseInt(i)+cols] != undefined){
 											cuadrados[parseInt(i)+cols].getBordesPintados()['top'][0] = true;
 											cuadrados[parseInt(i)+cols].getBordesPintados()['top'][1] = turnoPlayer.getColor();
-
+											painted = true;
 											socket.emit('clickEvent', cuadrados[parseInt(i)+cols].getBordesPintados(), cuadrados[parseInt(i)+cols].getColor(), parseInt(i)+cols, cuadrados[parseInt(i)+cols].getColored());
 										}
 									} else if(j === 'left'){
 										if(cuadrados[parseInt(i)-1] != undefined){
 											cuadrados[parseInt(i)-1].getBordesPintados()['right'][0] = true;
 											cuadrados[parseInt(i)-1].getBordesPintados()['right'][1] = turnoPlayer.getColor();
-
+											painted = true;
 											socket.emit('clickEvent', cuadrados[parseInt(i)-1].getBordesPintados(), cuadrados[parseInt(i)-1].getColor(), parseInt(i)-1, cuadrados[parseInt(i)-1].getColored());
 										}
 									}
@@ -507,7 +508,6 @@
 			var finish = true;
 			for(i in cuadrados){
 				if(cuadrados[i].getColored() === false){
-					finish = false;
 					if(cuadrados[i].getBordesPintados()['top'][0] === true && cuadrados[i].getBordesPintados()['right'][0] === true && cuadrados[i].getBordesPintados()['bottom'][0] === true && cuadrados[i].getBordesPintados()['left'][0] === true){
 						var puntosActuales = turnoPlayer.getPuntos();
 						puntosActuales++;
@@ -520,7 +520,8 @@
 						ctx.fillRect(cuadrados[i].values()[0],cuadrados[i].values()[1],cuadrados[i].values()[2],cuadrados[i].values()[2]);
 						socket.emit('clickEvent', cuadrados[i].getBordesPintados(), cuadrados[i].getColor(), i, cuadrados[i].getColored());
 						changeTurn = false;
-						finish = true;
+					} else {
+						finish = false;
 					}
 				}
 			}
@@ -528,7 +529,7 @@
 				socket.emit('finalizarPartida', playerA.getPuntos(), playerB.getPuntos());
 			}
 
-			if(changeTurn){
+			if(changeTurn && painted){
 				socket.emit('cambiarTurno', turnoPlayer.getId());
 			}
 
