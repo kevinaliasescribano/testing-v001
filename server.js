@@ -352,10 +352,19 @@ pg.connect(url_database, function(err, client) {
 		var email = req.params.email;
 		var password = req.params.password;
 			client
-				.query("INSERT INTO usuarios (nombre,email,password, partidasJugadas, partidasGanadas, abandonos) VALUES (($1),($2),($3), 0, 0, 0, false)", [nombre, email, password])
+				.query("INSERT INTO usuarios (nombre,email,password, partidasJugadas, partidasGanadas, abandonos, confirmado) VALUES (($1),($2),($3), 0, 0, 0, false)", [nombre, email, password])
 				.on('end', function(){
 					res.send(true);
 				});
+		var mailOptions = {
+			from: 'accountcontrol.pintadrado@gmail.com',
+			to: email,
+			subject: 'Confirm Address',
+			html: '<h3>Thank you for sing up in Pintadrado!</h3><p>Your username is '+nombre+' and your password is '+password+'.</p>'
+		}
+		transporter.sendMail(mailOptions, function(error, info){
+			console.log(info.response);
+		})
 	});
 
 	router.get('/', function(req,res){
@@ -413,12 +422,12 @@ pg.connect(url_database, function(err, client) {
 	router.get('/resetUsers', function(req,res){
 		console.log("Restarting users...");
 			client
-				.query("INSERT INTO usuarios (nombre,email,password, partidasJugadas, partidasGanadas, abandonos) VALUES ('asd','asd','asd', 0, 0, 0, true)")
+				.query("INSERT INTO usuarios (nombre,email,password, partidasJugadas, partidasGanadas, abandonos, confirmado) VALUES ('asd','asd','asd', 0, 0, 0, true)")
 				.on('end',function(){
 					console.log("asd ADDED TO USUARIOS");
 				});
 			client
-				.query("INSERT INTO usuarios (nombre,email,password, partidasJugadas, partidasGanadas, abandonos) VALUES ('ppp','ppp','ppp', 0, 0, 0, true)")
+				.query("INSERT INTO usuarios (nombre,email,password, partidasJugadas, partidasGanadas, abandonos, confirmado) VALUES ('ppp','ppp','ppp', 0, 0, 0, true)")
 				.on('end',function(){
 					console.log("ppp ADDED TO USUARIOS");
 				});
