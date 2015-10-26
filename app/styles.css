@@ -260,8 +260,8 @@ body{
 	text-align:center;
 }
 
-.regisForm table tr td input.denegate{
-	border:red 1px solid;
+.regisForm table .infoRegis{
+	padding:15px;
 }
 
 /**************************************************************************/
@@ -353,19 +353,21 @@ body{
 }
 
 #stats .divReturn{
-	width:10%;
+	width:80%;
 	margin-left:auto;
 	margin-right:auto;
 	margin-top:3%;
 }
 
-#stats .divReturn i{
+#stats .divReturn div{
 	padding:10px;
-	width:100%;
+	width:20%;
 	background-color:cornflowerblue;
+	display: inline-block;
 }
 
-#stats .divReturn i:hover{
+
+#stats .divReturn div:hover{
 	color:white;
 	cursor:pointer;
 }
@@ -472,23 +474,6 @@ body.loading {
 
 body.loading .modal {
     display: block;
-}
-
-.fa.iconoForm{
-	padding:10px;
-	border-radius: 25px;
-}
-
-.fa.iconoNeutro{
-	background-color: gray;
-}
-
-.fa.iconoError{
-	background-color: red;
-}
-
-.fa.iconoValid{
-	background-color: green;
 }
 
 #loginError{

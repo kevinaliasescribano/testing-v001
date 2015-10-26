@@ -80,27 +80,42 @@ $('.options').on('click', function(){
 });
 
 $('#makeRegis').on('click', function(){
-	//var id = $('.regisForm input[name="id"]').val();
+
+	var re = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i;
 	var nombre = $('.regisForm input[name="nombre"]').val();
 	var email = $('.regisForm input[name="email"]').val();
 	var password = $('.regisForm input[name="password"]').val();
-	$.ajax({
-		url: "/getUserByMail/"+email
-	})
-	.done(function(data){
-		if(data[0] === undefined){
-			$.ajax({
-				url: "/postUser/"+nombre+"/"+email+"/"+password,
-				data: {nombre: nombre, email: email, password: password}
-			})
-			.done(function(data){
-				if(data === true){
-					alert("USUARIO INSERTADO CORRECTAMENTE");
-					window.location.reload();
-				}
-			});
-		}
-	});
+	var confEmail = $('.regisForm input[name="confEmail"]').val();
+	var confPassword = $('.regisForm input[name="confPassword"]').val();
+
+	if(!re.test(email)){
+		$('.msgInfoRegis').text("El formato del email no es correcto.");
+		$('.msgInfoRegis').show();
+	} else if(email !== confEmail){
+		$('.msgInfoRegis').text("Los emails introducidos no coinciden.");
+		$('.msgInfoRegis').show();
+	} else if(password !== confPassword){
+		$('.msgInfoRegis').text("Las contraseñas introducidas no coinciden.");
+		$('.msgInfoRegis').show();
+	} else {
+		$.ajax({
+			url: "/getUserByMail/"+email
+		})
+		.done(function(data){
+			if(data[0] === undefined){
+				$.ajax({
+					url: "/postUser/"+nombre+"/"+email+"/"+password,
+					data: {nombre: nombre, email: email, password: password}
+				})
+				.done(function(data){
+					if(data === true){
+						alert("USUARIO INSERTADO CORRECTAMENTE");
+						window.location.reload();
+					}
+				});
+			}
+		});
+	}
 	
 });
 
@@ -155,66 +170,40 @@ $('#historial').on('click', function(){
 		$('.datosPerfil').slideUp(300);
 	}
 	$('.historialMostrado').slideDown(300);
-	if($('.historialMostrado table tr').length <= 1){
+	if($('.historialMostrado table tr').length < 1){
 		$.ajax({
 			url: "/getPartidasPersonales"
 		})
 		.done(function(data){
-			$.ajax({
-				url: "/getThisUsername"
-			})
-			.done(function(data2){
-				for(i in data){
-					$('.historialMostrado table').append("<tr><td>"+data[i].id+"</td><td>"+data[i].jugadora+"</td><td>"+data[i].jugadorb+"</td><td>"+data[i].puntuaciona+"</td><td>"+data[i].puntuacionb+"</td></tr>");
-					if(data[i].jugadora === data2){
-						if(data[i].puntuaciona > data[i].puntuacionb){
-							$('.historialMostrado table tr').last().addClass('win');
-						} else if(data[i].puntuaciona < data[i].puntuacionb){
-							$('.historialMostrado table tr').last().addClass('lose');
-						} else {
-							$('.historialMostrado table tr').last().addClass('eq');
-						}
-					} else if(data[i].jugadorb === data2){
-						if(data[i].puntuaciona < data[i].puntuacionb){
-							$('.historialMostrado table tr').last().addClass('win');
-						} else if(data[i].puntuaciona > data[i].puntuacionb){
-							$('.historialMostrado table tr').last().addClass('lose');
-						} else {
-							$('.historialMostrado table tr').last().addClass('eq');
+			if(data.length > 0){
+				$('.historialMostrado table').append("<tr><th>ID</th><th>JugadorA</th><th>jugadorB</th><th>PuntuacionA</th><th>PuntuacionB</th></tr>")
+				$.ajax({
+					url: "/getThisUsername"
+				})
+				.done(function(data2){
+					for(i in data){
+						$('.historialMostrado table').append("<tr><td>"+data[i].id+"</td><td>"+data[i].jugadora+"</td><td>"+data[i].jugadorb+"</td><td>"+data[i].puntuaciona+"</td><td>"+data[i].puntuacionb+"</td></tr>");
+						if(data[i].jugadora === data2){
+							if(data[i].puntuaciona > data[i].puntuacionb){
+								$('.historialMostrado table tr').last().addClass('win');
+							} else if(data[i].puntuaciona < data[i].puntuacionb){
+								$('.historialMostrado table tr').last().addClass('lose');
+							} else {
+								$('.historialMostrado table tr').last().addClass('eq');
+							}
+						} else if(data[i].jugadorb === data2){
+							if(data[i].puntuaciona < data[i].puntuacionb){
+								$('.historialMostrado table tr').last().addClass('win');
+							} else if(data[i].puntuaciona > data[i].puntuacionb){
+								$('.historialMostrado table tr').last().addClass('lose');
+							} else {
+								$('.historialMostrado table tr').last().addClass('eq');
+							}
 						}
 					}
-				}
-			});
-		});
-	}
-});
-
-$('.regisForm input[name="email"]').on('change', function(){
-	if($(this).val() !== ""){
-		$.ajax({
-			url: "/checkIfUserExists/" + $(this).val()
-		})
-		.done(function(data){
-			if(data[0] !== undefined){
-				if(!$('.iconoRegMail').hasClass('iconoNeutro')){
-					$('.iconoRegMail').removeClass('iconoValid');
-					$('.iconoRegMail').removeClass('fa-check');
-				} else {
-					$('.iconoRegMail').removeClass('iconoNeutro');
-					$('.iconoRegMail').removeClass('fa-minus');
-				}
-				$('.iconoRegMail').addClass('iconoError');
-				$('.iconoRegMail').addClass('fa-times');
+				});
 			} else {
-				if(!$('.iconoRegMail').hasClass('iconoNeutro')){
-					$('.iconoRegMail').removeClass('iconoError');
-					$('.iconoRegMail').removeClass('fa-times');
-				} else {
-					$('.iconoRegMail').removeClass('iconoNeutro');
-					$('.iconoRegMail').removeClass('fa-minus');
-				}
-				$('.iconoRegMail').addClass('iconoValid');
-				$('.iconoRegMail').addClass('fa-check');
+				$('.historialMostrado table').append("<tr><th>No hay datos disponibles.</th></tr>")
 			}
 		});
 	}

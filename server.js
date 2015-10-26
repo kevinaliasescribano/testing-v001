@@ -238,30 +238,6 @@ pg.connect(url_database, function(err, client) {
 			io.sockets.emit('squarePainted', color, id);
 		});
 	});
-	
-	router.get('/resetTables', function(req,res){
-		console.log("Restarting tables...");
-		client
-			.query('DROP TABLE usuarios')
-			.on('end', function(){
-				console.log("CREATING USUARIOS");
-				client
-					.query('CREATE TABLE IF NOT EXISTS usuarios(id SERIAL PRIMARY KEY, nombre varchar(30),email varchar(50),password varchar(30),partidasJugadas int,partidasGanadas int,abandonos int)')
-					.on('end',function(){
-						console.log("USUARIOS CREATED");
-					});
-			});
-		client
-			.query('DROP TABLE partidas')
-			.on('end', function(){
-				console.log("CREATING PARTIDAS");
-				client
-					.query('CREATE TABLE IF NOT EXISTS partidas(id SERIAL PRIMARY KEY, jugadorA varchar(30), jugadorB varchar(30), abandono boolean, puntuacionA int, puntuacionB int)')
-					.on('end',function(){
-						console.log("PARTIDAS CREATED");
-					});
-			});
-	});
 
 	router.get('/getUsers', function(req,res){
 		if(req.session.email === "asd"){
@@ -376,7 +352,7 @@ pg.connect(url_database, function(err, client) {
 		var email = req.params.email;
 		var password = req.params.password;
 			client
-				.query("INSERT INTO usuarios (nombre,email,password, partidasJugadas, partidasGanadas, abandonos) VALUES (($1),($2),($3), 0, 0, 0)", [nombre, email, password])
+				.query("INSERT INTO usuarios (nombre,email,password, partidasJugadas, partidasGanadas, abandonos) VALUES (($1),($2),($3), 0, 0, 0, false)", [nombre, email, password])
 				.on('end', function(){
 					res.send(true);
 				});
@@ -404,6 +380,48 @@ pg.connect(url_database, function(err, client) {
 		} else {
 			res.redirect("/");
 		}
+	});
+
+	/**********************************************/
+	/***************** ADMIN RULES ****************/
+	/**********************************************/
+
+	router.get('/resetTables', function(req,res){
+		console.log("Restarting tables...");
+		client
+			.query('DROP TABLE usuarios')
+			.on('end', function(){
+				console.log("CREATING TABLE USUARIOS");
+				client
+					.query('CREATE TABLE IF NOT EXISTS usuarios(id SERIAL PRIMARY KEY, nombre varchar(30),email varchar(50),password varchar(30),partidasJugadas int,partidasGanadas int,abandonos int,confirmado boolean)')
+					.on('end',function(){
+						console.log("TABLE USUARIOS CREATED");
+					});
+			});
+		client
+			.query('DROP TABLE partidas')
+			.on('end', function(){
+				console.log("CREATING TABLE PARTIDAS");
+				client
+					.query('CREATE TABLE IF NOT EXISTS partidas(id SERIAL PRIMARY KEY, jugadorA varchar(30), jugadorB varchar(30), abandono boolean, puntuacionA int, puntuacionB int)')
+					.on('end',function(){
+						console.log("TABLE PARTIDAS CREATED");
+					});
+			});
+	});
+
+	router.get('/resetUsers', function(req,res){
+		console.log("Restarting users...");
+			client
+				.query("INSERT INTO usuarios (nombre,email,password, partidasJugadas, partidasGanadas, abandonos) VALUES ('asd','asd','asd', 0, 0, 0, true)")
+				.on('end',function(){
+					console.log("asd ADDED TO USUARIOS");
+				});
+			client
+				.query("INSERT INTO usuarios (nombre,email,password, partidasJugadas, partidasGanadas, abandonos) VALUES ('ppp','ppp','ppp', 0, 0, 0, true)")
+				.on('end',function(){
+					console.log("ppp ADDED TO USUARIOS");
+				});
 	});
 
 });
