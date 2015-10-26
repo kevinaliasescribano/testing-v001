@@ -244,10 +244,12 @@
 				ctx.beginPath();
 				var hoverOnElement = false;
 				for(j in cuadrados[i].getBordesPintados()){
-					if(cuadrados[i].getBordesPintados()[j] === 'swap'){
+					if(cuadrados[i].getBordesPintados()[j][0] === 'swap'){
+						console.log("swap in "+j);
 						hoverOnElement = true;
 					}
 				}
+				console.log("swap result: "+hoverOnElement);
 				if(!hoverOnElement){
 					if(cuadrados[i].getBordesPintados().top[0] === true){
 						if(cuadrados[i].getBordesPintados().right[0] === true){
