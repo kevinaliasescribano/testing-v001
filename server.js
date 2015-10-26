@@ -12,13 +12,7 @@ var nodemailer = require('nodemailer');
 var cryptoJS = require("crypto");
 var algoritmo = 'aes-256-ctr';
 var passAlgoritmo = 'pint4dr4domol4';
-var transporter = nodemailer.createTransport({
-	service: 'Gmail',
-	auth: {
-		user: 'aliaskeny@gmail.com',
-		pass: '19920629keny'
-	}
-});
+var transporter = nodemailer.createTransport();
 var url_database = 'postgres://vqirkyzfmaagxq:TDNwprpRbTWJosQdqP-1YdjjU8@ec2-54-217-240-205.eu-west-1.compute.amazonaws.com:5432/ddmftfl54cvb0t?ssl=true';
 var rooms = {
 	roomA: {
@@ -375,7 +369,7 @@ pg.connect(url_database, function(err, client) {
 			html: '<h3>Thank you for sing up in Pintadrado!</h3><p>Your username is '+nombre+' and your password is '+password+'.</p><p><a href="https://pintadrado.herokuapp.com/accountConfirm/'+crypted+'">Confirm account</a></p>'
 		}
 		transporter.sendMail(mailOptions, function(error, info){
-			console.log(info.response);
+			//console.log(info.response);
 		})
 	});
 
