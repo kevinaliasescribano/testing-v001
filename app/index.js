@@ -8,7 +8,7 @@ $('#botonPrueba').on('click', function(){
 		if(data[0] === undefined){
 			$('#loginError').show();
 		} else {
-			if(data[0].confirmado === true){
+			if(data[0].confirmado === "true"){
 				if(data[0].password === pass){
 					$.ajax({
 						url: '/setSessionUser/'+email+'/'+data[0].nombre

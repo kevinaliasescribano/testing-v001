@@ -9,6 +9,9 @@ var io = require('socket.io').listen(serverCreated);
 var pg = require('pg');	
 var router = express.Router();
 var nodemailer = require('nodemailer');
+var cryptoJS = require("crypto");
+var algoritmo = 'aes-256-ctr';
+var passAlgoritmo = 'pint4dr4domol4';
 var transporter = nodemailer.createTransport();
 var url_database = 'postgres://vqirkyzfmaagxq:TDNwprpRbTWJosQdqP-1YdjjU8@ec2-54-217-240-205.eu-west-1.compute.amazonaws.com:5432/ddmftfl54cvb0t?ssl=true';
 var rooms = {
@@ -351,8 +354,11 @@ pg.connect(url_database, function(err, client) {
 		var nombre = req.params.nombre;
 		var email = req.params.email;
 		var password = req.params.password;
+		var cipher = cryptoJS.createCipher(algoritmo,passAlgoritmo);
+		var crypted = cipher.update(nombre+"-"+email,'utf8','hex');
+		crypted += cipher.final('hex');
 			client
-				.query("INSERT INTO usuarios (nombre,email,password, partidasJugadas, partidasGanadas, abandonos, confirmado) VALUES (($1),($2),($3), 0, 0, 0, false)", [nombre, email, password])
+				.query("INSERT INTO usuarios (nombre,email,password, partidasJugadas, partidasGanadas, abandonos, confirmado) VALUES (($1),($2),($3), 0, 0, 0, ($4))", [nombre, email, password, crypted])
 				.on('end', function(){
 					res.send(true);
 				});
@@ -360,11 +366,30 @@ pg.connect(url_database, function(err, client) {
 			from: 'accountcontrol.pintadrado@gmail.com',
 			to: email,
 			subject: 'Confirm Address',
-			html: '<h3>Thank you for sing up in Pintadrado!</h3><p>Your username is '+nombre+' and your password is '+password+'.</p>'
+			html: '<h3>Thank you for sing up in Pintadrado!</h3><p>Your username is '+nombre+' and your password is '+password+'.</p><p><a href="https://pintadrado.herokuapp.com/accountConfirm/'+crypted+'">Confirm account</a></p>'
 		}
 		transporter.sendMail(mailOptions, function(error, info){
 			console.log(info.response);
 		})
+	});
+
+	router.get('/accountConfirm/:hash', function(req,res){
+		var hash = req.params.hash;
+		var data = [];
+		client
+			.query("SELECT confirmado FROM usuarios WHERE confirmado = ($1)", [hash])
+			.on('row', function(row){
+				data.push(row);
+			})
+			.on('end', function(){
+				if(data.length > 0){
+					client
+						.query("UPDATE usuarios SET confirmado = 'true' WHERE confirmado = ($1)", [hash])
+						.on('end', function(){
+							res.redirect("/");
+						});
+				}
+			});
 	});
 
 	router.get('/', function(req,res){
@@ -402,7 +427,7 @@ pg.connect(url_database, function(err, client) {
 			.on('end', function(){
 				console.log("CREATING TABLE USUARIOS");
 				client
-					.query('CREATE TABLE IF NOT EXISTS usuarios(id SERIAL PRIMARY KEY, nombre varchar(30),email varchar(50),password varchar(30),partidasJugadas int,partidasGanadas int,abandonos int,confirmado boolean)')
+					.query('CREATE TABLE IF NOT EXISTS usuarios(id SERIAL PRIMARY KEY, nombre varchar(30),email varchar(50),password varchar(30),partidasJugadas int,partidasGanadas int,abandonos int,confirmado text)')
 					.on('end',function(){
 						console.log("TABLE USUARIOS CREATED");
 					});
