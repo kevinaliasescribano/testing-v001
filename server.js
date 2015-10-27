@@ -299,6 +299,11 @@ pg.connect(url_database, function(err, client) {
 				respuesta.push(row);
 			})
 			.on('end', function(){
+				if(respuesta[0] !== undefined){
+					var decipher = cryptoJS.createDecipher(algoritmo,mailFiltered);
+					respuesta[0].password = decipher.update(respuesta[0].password,'hex','utf8');
+					respuesta[0].password += decipher.final('utf8');
+				}
 				res.send(respuesta);
 			});
 	});
@@ -361,11 +366,14 @@ pg.connect(url_database, function(err, client) {
 		var nombre = req.params.nombre;
 		var email = req.params.email;
 		var password = req.params.password;
-		var cipher = cryptoJS.createCipher(algoritmo,passAlgoritmo);
+		var cipher = cryptoJS.createCipher(algoritmo,email);
 		var crypted = cipher.update(nombre+"-"+email,'utf8','hex');
 		crypted += cipher.final('hex');
+		cipher = cryptoJS.createCipher(algoritmo,email);
+		var passCrypted = cipher.update(password,'utf8','hex');
+		passCrypted += cipher.final('hex');
 			client
-				.query("INSERT INTO usuarios (nombre,email,password, partidasJugadas, partidasGanadas, abandonos, confirmado) VALUES (($1),($2),($3), 0, 0, 0, ($4))", [nombre, email, password, crypted])
+				.query("INSERT INTO usuarios (nombre,email,password, partidasJugadas, partidasGanadas, abandonos, confirmado) VALUES (($1),($2),($3), 0, 0, 0, ($4))", [nombre, email, passCrypted, crypted])
 				.on('end', function(){
 					res.send(true);
 				});
@@ -434,7 +442,7 @@ pg.connect(url_database, function(err, client) {
 			.on('end', function(){
 				console.log("CREATING TABLE USUARIOS");
 				client
-					.query('CREATE TABLE IF NOT EXISTS usuarios(id SERIAL PRIMARY KEY, nombre varchar(30),email varchar(50),password varchar(30),partidasJugadas int,partidasGanadas int,abandonos int,confirmado text)')
+					.query('CREATE TABLE IF NOT EXISTS usuarios(id SERIAL PRIMARY KEY, nombre varchar(30),email varchar(50),password text,partidasJugadas int,partidasGanadas int,abandonos int,confirmado text)')
 					.on('end',function(){
 						console.log("TABLE USUARIOS CREATED");
 					});
@@ -453,13 +461,19 @@ pg.connect(url_database, function(err, client) {
 
 	router.get('/resetUsers', function(req,res){
 		console.log("Restarting users...");
+		var cipher = cryptoJS.createCipher(algoritmo,"asd");
+		var crypted = cipher.update("asd",'utf8','hex');
+		crypted += cipher.final('hex');
 			client
-				.query("INSERT INTO usuarios (nombre,email,password, partidasJugadas, partidasGanadas, abandonos, confirmado) VALUES ('asd','asd','asd', 0, 0, 0, true)")
+				.query("INSERT INTO usuarios (nombre,email,password, partidasJugadas, partidasGanadas, abandonos, confirmado) VALUES ('asd','asd',($1), 0, 0, 0, true)",[crypted])
 				.on('end',function(){
 					console.log("asd ADDED TO USUARIOS");
 				});
+		cipher = cryptoJS.createCipher(algoritmo,"ppp");
+		crypted = cipher.update("ppp",'utf8','hex');
+		crypted += cipher.final('hex');
 			client
-				.query("INSERT INTO usuarios (nombre,email,password, partidasJugadas, partidasGanadas, abandonos, confirmado) VALUES ('ppp','ppp','ppp', 0, 0, 0, true)")
+				.query("INSERT INTO usuarios (nombre,email,password, partidasJugadas, partidasGanadas, abandonos, confirmado) VALUES ('ppp','ppp',($1), 0, 0, 0, true)",[crypted])
 				.on('end',function(){
 					console.log("ppp ADDED TO USUARIOS");
 				});
