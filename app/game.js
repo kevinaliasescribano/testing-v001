@@ -9,8 +9,8 @@
 	var creado = false;
 	var posXact = 0;
 	var posYact = 0;
-	var squareSize = 148;
-	//var squareSize = 18;
+	//var squareSize = 148;
+	var squareSize = 18;
 	var paintStop = true;
 	var cuadrados = [];
 	var bordesPintados = [];

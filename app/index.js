@@ -9,8 +9,7 @@ $('#botonPrueba').on('click', function(){
 			$('#loginError').show();
 		} else {
 			if(data[0].confirmado === "true"){
-				alert(data[0].password);
-				if(data[0].password){
+				if(pass == data[0].password){
 					$.ajax({
 						url: '/setSessionUser/'+email+'/'+data[0].nombre
 					})

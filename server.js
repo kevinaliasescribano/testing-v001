@@ -124,8 +124,12 @@ pg.connect(url_database, function(err, client) {
 			console.log(roomSelected.users[roomSelected.playerB]);
 			if(roomSelected.playerA === "A" && socket.username === "B"){
 				io.sockets.connected[roomSelected.users[roomSelected.playerA]].emit('infoLeave', roomSelected.namePlayerB);
+				client
+					.query('INSERT INTO partidas (jugadorA, jugadorB, abandono, puntuacionA, puntuacionB) VALUES (($1), ($2), ($3), 0, 0)', [roomSelected.namePlayerA, roomSelected.namePlayerB, roomSelected.namePlayerB]);
 			} else if(roomSelected.playerB === "B" && socket.username === "A"){
 				io.sockets.connected[roomSelected.users[roomSelected.playerB]].emit('infoLeave', roomSelected.namePlayerA);
+				client
+					.query('INSERT INTO partidas (jugadorA, jugadorB, abandono, puntuacionA, puntuacionB) VALUES (($1), ($2), ($3), 0, 0)', [roomSelected.namePlayerA, roomSelected.namePlayerB, roomSelected.namePlayerA]);
 			}
 
 			ips.splice(ips.indexOf(socket.handshake.address), 1);
@@ -229,7 +233,7 @@ pg.connect(url_database, function(err, client) {
 			console.log(puntosA + " - " + typeof puntosA);
 			console.log(puntosB + " - " + typeof puntosB);
 			client
-				.query('INSERT INTO partidas (jugadorA, jugadorB, abandono, puntuacionA, puntuacionB) VALUES (($1), ($2), FALSE, ($3), ($4))', [roomSelected.namePlayerA, roomSelected.namePlayerB, puntosA, puntosB]);
+				.query('INSERT INTO partidas (jugadorA, jugadorB, abandono, puntuacionA, puntuacionB) VALUES (($1), ($2), "", ($3), ($4))', [roomSelected.namePlayerA, roomSelected.namePlayerB, puntosA, puntosB]);
 
 			roomSelected.playerB = '';
 			roomSelected.namePlayerB = '';
@@ -250,7 +254,7 @@ pg.connect(url_database, function(err, client) {
 	});
 
 	router.get('/getUsers', function(req,res){
-		if(req.session.email === "asd"){
+		//if(req.session.email === "asd"){
 			var respuesta = [];
 				client
 					.query('SELECT * FROM usuarios')
@@ -260,9 +264,9 @@ pg.connect(url_database, function(err, client) {
 					.on('end', function(){
 						res.send(respuesta);
 					});	
-		} else {
-			res.status(404).send("Cannot GET "+req.url);
-		}
+		//} else {
+		//	res.status(404).send("Cannot GET "+req.url);
+		//}
 	});
 
 	router.get('/getPartidas', function(req,res){
@@ -452,7 +456,7 @@ pg.connect(url_database, function(err, client) {
 			.on('end', function(){
 				console.log("CREATING TABLE PARTIDAS");
 				client
-					.query('CREATE TABLE IF NOT EXISTS partidas(id SERIAL PRIMARY KEY, jugadorA varchar(30), jugadorB varchar(30), abandono boolean, puntuacionA int, puntuacionB int)')
+					.query('CREATE TABLE IF NOT EXISTS partidas(id SERIAL PRIMARY KEY, jugadorA varchar(30), jugadorB varchar(30), abandono varchar(30), puntuacionA int, puntuacionB int)')
 					.on('end',function(){
 						console.log("TABLE PARTIDAS CREATED");
 					});
